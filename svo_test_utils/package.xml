@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>svo_test_utils</name>
+  <description>
+    Utility functions useful for tests and experiments.
+  </description>
+  <version>0.0.1</version>
+  <license>tbd</license>
+
+  <author>Christian Forster</author>
+  <author>Manuel Werlberger</author>
+  <maintainer email="forster@ifi.uzh.ch">Christian Forster</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>cv_bridge</depend>
+  <depend>eigen_catkin</depend>
+  <depend>glog_catkin</depend>
+  <depend>roslib</depend>
+  <depend>svo_common</depend>
+  <depend>vikit_ros</depend>
+  <depend>vikit_common</depend>
+  <depend>vikit_cameras</depend>
+  
+  <test_depend>gtest</test_depend>
+</package>

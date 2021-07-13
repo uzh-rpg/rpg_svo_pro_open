@@ -1,0 +1,24 @@
+distortion:
+  parameters:
+    cols: 1
+    rows: 0
+    data: []
+  type: none
+image_height: 480
+image_width: 752
+intrinsics:
+  cols: 1
+  data: [-69.6915, 0.000000e+00, 5.4772e-4, 2.1371e-5, -8.7523e-9, 320.0, 240.0, 1.0, 0.0, 0.0, 142.7468, 104.8486, 7.3973, 17.4581, 12.6308, -4.3751, 6.9093, 10.9703, -0.6053, -3.9119, -1.0675, 0.0, 0.0, 1.0]
+  rows: 24
+label: cam0
+line-delay-nanoseconds: 0
+type: omni
+mask: test_mask.png
+T_B_C:
+  cols: 4
+  rows: 4
+  data: [1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 0]
+

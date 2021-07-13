@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>svo_benchmarking</name>
+  <version>0.0.0</version>
+  <description>svo_benchmarking utils</description>
+
+  <maintainer email="zzhang@ifi.uzh.ch">Zichao Zhang</maintainer>
+  <author>Zichao Zhang</author>
+  <author>Jonathan Huber</author>
+  <author>Christian Forster</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>roscpp</depend>
+  <depend>rosbag</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>python-rospkg</depend>
+  <depend>python-yaml</depend>
+  <depend>svo_ros</depend>
+  <export>
+  </export>
+</package>

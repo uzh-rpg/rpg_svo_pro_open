@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>svo_global_map</name>
+  <description>
+    Maintain an optimized global map.
+  </description>
+  <version>0.0.1</version>
+  <license>tbd</license>
+  <author>Christian Forster</author>
+  <author>Zichao Zhang</author>
+  <maintainer email="zzhang@ifi.uzh.ch">Zichao Zhang</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+  <depend>gtsam</depend>
+  <depend>svo_vio_common</depend>
+  <depend>svo_common</depend>
+  <depend>rpg_common</depend>
+</package>

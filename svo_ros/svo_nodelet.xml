@@ -1,0 +1,9 @@
+<library path="libsvo_nodelet">
+  <class name="svo_ros/SvoNodelet"
+         type="svo::SvoNodelet"
+         base_class_type="nodelet::Nodelet">
+    <description> 
+      A nodelet wrapper for SVO.
+    </description>
+  </class>
+</library>

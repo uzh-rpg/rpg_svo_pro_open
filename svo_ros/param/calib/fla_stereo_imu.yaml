@@ -1,0 +1,75 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 4
+        data: [-0.24252919348116794, 0.03930108103982388, 0.0008221249960346152, -0.002043418590796441]
+      type: radial-tangential
+    image_height: 1024
+    image_width: 1280
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [637.7135749684152, 635.2114915927144, 664.9670062685065, 489.8734610241461]
+      label: /sync/cam0/image_raw
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [0.99984983, -0.00373198,  0.01692284,  -0.074783895,
+           0.00403133,  0.9998354 , -0.01768969,  -0.0005     ,
+          -0.01685403,  0.01775525,  0.9997003 ,  -0.0041,
+           0.        ,  0.        ,  0.        ,  1.        ]
+  serial_no: 0
+  calib_date: 0
+  description: 'left cam'
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 4
+        data: [-0.25170969692935957, 0.04478134226090527, 0.0002848490302781225, 0.002230802727272928]
+      type: radial-tangential
+    image_height: 1024
+    image_width: 1280
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [645.9125584269032, 643.8200253341743, 606.2090195940297, 508.4909138768748]
+    label: /sync/cam1/image_raw
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [0.99746136, -0.00394329, -0.07110054, 0.074783895,
+           0.00236645,  0.99974967, -0.02224833, 0.0005,
+           0.07117047,  0.02202359,  0.997221  , 0.0041,
+           0.        ,  0.        ,  0.        ,  1.       ]
+  serial_no: 0
+  calib_date: 0
+  description: 'right cam'
+label: fla1_forward_stereo
+
+imu_params:
+  delay_imu_cam: 0.0
+  max_imu_delta_t: 0.01
+  acc_max: 176.0
+  omega_max: 7.8
+  sigma_omega_c: 0.005
+  sigma_acc_c: 0.01
+  sigma_omega_bias_c: 4.0e-6
+  sigma_acc_bias_c: 0.0002
+  sigma_integration: 0.0
+  g: 9.81007
+  imu_rate: 200.0
+
+imu_initialization:
+  velocity: [0, 0, 0]
+  omega_bias: [0, 0, 0]
+  acc_bias: [0, 0, 0]
+  velocity_sigma: 0.5
+  omega_bias_sigma: 0.005
+  acc_bias_sigma: 0.05

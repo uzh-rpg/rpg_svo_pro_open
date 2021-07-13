@@ -1,0 +1,49 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 0
+        data: []
+      type: none
+    image_height: 376
+    image_width: 1241
+    intrinsics:
+      cols: 1
+      data: [7.188560000000e+02, 7.188560000000e+02, 6.071928000000e+02, 1.852157000000e+02]
+      rows: 4
+    label: cam0
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [1, 0, 0, 0,
+           0, 1, 0, 0,
+           0, 0, 1, 0,
+           0, 0, 0, 0]
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 0
+        data: []
+      type: none
+    image_height: 376
+    image_width: 1241
+    intrinsics:
+      cols: 1
+      data: [7.188560000000e+02, 7.188560000000e+02, 6.071928000000e+02, 1.852157000000e+02]
+      rows: 4
+    label: cam1
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [1, 0, 0, 0.53716571886,
+           0, 1, 0, 0,
+           0, 0, 1, 0,
+           0, 0, 0, 0]
+
+label: /kitti_camera

@@ -1,0 +1,7 @@
+imu_bias/ax: 0.24937
+imu_bias/ay: 0.30818
+imu_bias/az: 2.30426
+
+imu_bias/wx: 0.01517
+imu_bias/wy: 0.02372
+imu_bias/wz: -0.00498

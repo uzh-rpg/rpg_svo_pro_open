@@ -1,0 +1,53 @@
+repositories:
+  catkin_simple:
+    type: git
+    url: git@github.com:catkin/catkin_simple.git
+    version: master
+  cmake_external_project_catkin:
+    type: git
+    url: git@github.com:zurich-eye/cmake_external_project_catkin.git
+    version: master
+  eigen_catkin:
+    type: git
+    url: git@github.com:ethz-asl/eigen_catkin.git
+    version: master
+  eigen_checks:
+    type: git
+    url: git@github.com:ethz-asl/eigen_checks.git
+    version: master
+  fast_neon:
+    type: git
+    url: git@github.com:uzh-rpg/fast_neon.git
+    version: master
+  gflags_catkin:
+    type: git
+    url: git@github.com:ethz-asl/gflags_catkin.git
+    version: master
+  glog_catkin:
+    type: git
+    url: git@github.com:ethz-asl/glog_catkin.git
+    version: master
+  minkindr:
+    type: git
+    url: git@github.com:ethz-asl/minkindr.git
+    version: master
+  opengv:
+    type: git
+    url: git@github.com:ethz-asl/opengv.git
+    version: master
+  minkindr_ros:
+    type: git
+    url: git@github.com:ethz-asl/minkindr_ros.git
+    version: master
+  ceres_catkin:
+    type: git
+    url: git@github.com:ethz-asl/ceres_catkin.git
+    version: master
+  dbow2_catkin:
+    type: git
+    url: git@github.com:uzh-rpg/dbow2_catkin.git
+    version: master
+  rpg_trajectory_evaluation:
+    type: git
+    url: git@github.com:uzh-rpg/rpg_trajectory_evaluation.git
+    version: dev

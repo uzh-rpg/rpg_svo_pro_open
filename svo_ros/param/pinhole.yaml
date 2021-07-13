@@ -1,0 +1,112 @@
+# Instructions:
+# - Most of the time you will just need to change the basic parameters.
+# - The parameters in this file are set for the resolution of 752x480.
+#   If you use a different resolution, change the parameters for
+#   each module according to the comments.
+
+############################
+##### Basic parameters #####
+############################
+
+# Pipeline type
+pipeline_is_stereo: False
+
+# Feature and keyframe number
+# To run faster, you can decrease `max_fts` and `max_n_kfs`, for example:
+# max_fts: 120
+# max_n_kfs: 5
+max_fts: 180
+max_n_kfs: 30
+
+# Map scale when initialized (not used for stereo)
+# Increase if the initial scene depth is larger
+map_scale: 1.0
+
+# Initial rotation
+T_world_imuinit/qx: 0
+T_world_imuinit/qy: 0
+T_world_imuinit/qz: 0
+T_world_imuinit/qw: 1
+
+# Keyframe selection
+kfselect_criterion: FORWARD    # alterntive: DOWNLOOKING
+# The following kfselect_* ONLY affects FORWARD
+# If the number of features: >upper, no keyframe; <lower, take keyframe
+kfselect_numkfs_upper_thresh: 120
+kfselect_numkfs_lower_thresh: 70
+# If the current frame is within the following range of any visible keyframes,
+# do not take a new keyframe.
+# You can lower these values for more keyframes
+kfselect_min_dist_metric: 0.1
+kfselect_min_angle: 20
+# If the median disparity from the last keyframe is smaller,
+# do not take a new keyframe
+# You can lower this value for more keyframes
+kfselect_min_disparity: 40
+# When taking a new keyframe,
+# we can already update the newly initialized seeds with old keyframes.
+# This is important for forward looking case.
+update_seeds_with_old_keyframes: True  
+
+# Default affine compensation parameters
+# Most of the parameters are set to false for the consideration of processing time.
+# If you observe bad tracking because of light/expousre change,
+# enable the following parameters.
+img_align_est_illumination_gain: false
+img_align_est_illumination_offset: false
+depth_filter_affine_est_offset: true
+depth_filter_affine_est_gain: false
+reprojector_affine_est_offset: true
+reprojector_affine_est_gain: false
+
+########################################
+###### Tuning for each module ##########
+########################################
+# Initialization
+# For a higher resolution, increase the value accordingly.
+init_min_disparity: 30
+
+# Feature Detection
+grid_size: 30 # Larger for larger images, for every cell you have max one feature.
+n_pyr_levels: 3 # Increase for larger images (image align max minus one)
+detector_threshold_primary: 10 # Fast detector threshold
+detector_threshold_secondary: 200 # Edgelet detector threshold
+
+# Image Alignment
+img_align_max_level: 4 # Increase this level by one if the image is double the width and height (752x480).
+img_align_min_level: 2
+
+# Reprojection
+use_async_reprojectors: False # For stereo, change it to True for multithreading.
+reprojector_max_n_kfs: 5 # Local map size. Larger is computationally more intensive. More reduces drift.
+scan_epi_unit_sphere: False # for wide angle lens, set it to True.
+
+# Pose Optimization
+poseoptim_thresh: 2.0 # Reprojection outlier threshold (px), should be larger for larger images.
+poseoptim_using_unit_sphere: False # For wide angle lens, set it to True
+
+# Depth Filter
+# How many times does the covariance need to decrease until a seed is considered converged.
+# Increase to get more accurate points
+seed_convergence_sigma2_thresh: 200
+
+# IMU
+# Normally the prior should be 0 if not using IMU.
+use_imu: False
+poseoptim_prior_lambda: 0.0 # Gyroscope prior in pose optimization
+img_align_prior_lambda_rot: 0.0 # Gyroscope prior in sparse image alignment
+img_align_prior_lambda_trans: 0.0 # Constant velocity assumption prior in sparse image alignment
+
+# Dense input
+publish_every_nth_dense_input: 5
+
+# Visualization
+publish_marker_scale: 0.5
+
+# Stereo parameters, not used for mono.
+max_depth_inv: 0.05
+min_depth_inv: 1.0
+mean_depth_inv: 0.3
+
+# Disable ceres backend
+use_ceres_backend: false

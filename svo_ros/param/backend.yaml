@@ -1,0 +1,26 @@
+# Backend
+use_ceres_backend: true
+ceres_verbose: false
+ceres_marginalize: true
+ceres_num_iterations: 3
+ceres_num_imu_frames: 3
+ceres_max_iteration_time: -1.0 # soft limit, set to -1 to deactivate
+publish_marker_scale_backend: 0.5 # set to -1 to deactivate visualization of landmarks
+backend_only_use_corners: false
+
+# outlier rejection
+use_outlier_rejection: true
+outlier_rejection_px_threshold: 2.0
+
+# Zero Motion Detection
+backend_use_zero_motion_detection: true
+backend_zero_motion_check_n_frames: 5
+zero_motion_px_diff_threshold: 0.2
+zero_motion_ratio_moving_pixels_threshold: 0.1
+zero_motion_min_number_correspondences: 5
+zero_motion_max_features_to_check: 15
+zero_motion_sigma: 0.1
+
+# Loop closing
+ceres_remove_marginalization_term_after_loop: true
+ceres_recalculate_imu_terms_after_loop: true

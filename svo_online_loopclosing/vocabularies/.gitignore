@@ -1,0 +1,5 @@
+*
+!.gitignore
+!download_voc.sh
+*.yml.gz
+

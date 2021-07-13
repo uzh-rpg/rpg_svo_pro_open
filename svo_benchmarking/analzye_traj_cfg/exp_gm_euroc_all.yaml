@@ -1,0 +1,30 @@
+Datasets:
+  MH_01:
+    label: MH01
+  MH_02:
+    label: MH02
+  MH_03:
+    label: MH03
+  MH_04:
+    label: MH04
+  MH_05:
+    label: MH05
+  V1_01:
+    label: V101
+  V1_02:
+    label: V102
+  V1_03:
+    label: V103
+  V2_01:
+    label: V201
+  V2_02:
+    label: V202
+  V2_03:
+    label: V203
+Algorithms:
+  svo_ceres_rp:
+    fn: traj_est
+    label: svoceres-rp
+  svo_ceres_ba: 
+    fn: ba_estimate
+    label: svoceres-ba

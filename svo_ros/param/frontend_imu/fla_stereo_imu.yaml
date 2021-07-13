@@ -1,0 +1,44 @@
+# Basic
+pipeline_is_stereo: True
+automatic_reinitialization: True # When lost, stereo can recover immediately
+
+# Stereo triangulation depth range
+max_depth_inv: 0.05
+min_depth_inv: 2.0
+mean_depth_inv: 0.3
+
+# IMU
+use_imu: True
+img_align_prior_lambda_rot: 5.0 # Gyroscope prior in sparse image alignment
+poseoptim_prior_lambda: 2.0 # Gyroscope prior in pose optimization
+
+
+# Keyframe selection
+max_n_kfs: 10
+kfselect_criterion: FORWARD
+kfselect_numkfs_upper_thresh: 160 # If it has more features, it never creates a keyframe
+kfselect_numkfs_lower_thresh: 70 # If it has less features, it always creates a keyframe
+kfselect_min_num_frames_between_kfs: 2 # ..except this.
+kfselect_min_disparity: 30
+kfselect_min_angle: 20
+kfselect_min_dist_metric: 0.01
+update_seeds_with_old_keyframes: True
+
+# Image Alignment
+img_align_max_level: 5 # increase this level if image is double the size of VGA
+img_align_min_level: 2
+poseoptim_thresh: 3.0 # reprojection threshold, maybe make a bit larger for larger images.
+
+# Reprojection
+use_async_reprojectors: True # For stereo, use multithreading in reprojector
+reprojector_max_n_kfs: 10 # Local map size. Larger is computationally more intensive. More reduces drift.
+
+# Feature detection
+max_fts: 180
+grid_size: 50 # Larger for larger images, for every cell you have max one feature
+n_pyr_levels: 4 # Increase for larger images (image align max minus one)
+detector_threshold_primary: 7 # Fast detector threshold
+detector_threshold_secondary: 250 # Edgelet detector threshold
+
+# Disable ceres backend
+use_ceres_backend: false

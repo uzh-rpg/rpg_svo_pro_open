@@ -1,0 +1,27 @@
+<!-- Launch File for running svo with ceres backend from bag-file -->
+<launch>
+  <arg name="calib_file" default="$(find svo_ros)/param/calib/euroc_stereo.yaml"/>
+
+  <!-- SVO node -->
+  <node pkg="svo_ros" type="svo_node" name="svo" clear_params="true" output="screen" args="--v=0">
+
+    <!-- Camera topic to subscribe to -->
+    <param name="cam0_topic" value="/cam0/image_raw" type="str" />
+    <param name="cam1_topic" value="/cam1/image_raw" type="str" />
+	
+    <!-- Imu topic to subscribe to -->
+    <param name="imu_topic" value="/imu0" type="str" />
+
+    <!-- Camera calibration file -->
+    <param name="calib_file" value="$(arg calib_file)" />
+
+    <!--Parameters-->
+    <rosparam file="$(find svo_ros)/param/vio_stereo.yaml" />
+    <param name='runlc' value='true' />
+
+  </node>
+
+  <!-- RVIZ -->
+  <node name="vis" pkg="rviz" type="rviz" args=" -d $(find svo_ros)/rviz_config_vio.rviz" />
+
+</launch>

@@ -1,0 +1,251 @@
+experiment_label: 'svoceres'
+ros_node: svo_ros
+ros_node_name: svo_benchmark
+flags: 
+  v: 0
+  logtostderr: 0
+
+settings:
+  dataset_is_stereo: True
+  trace_statistics: True
+  calib_name: calib.yaml #needs to be in dataset folder
+  #sleep_us: 50000
+  # Instructions:
+  ############################
+  ##### Basic parameters #####
+  ############################
+
+  # Automatic initialisation
+  automatic_reinitialization: True
+
+  # Pipeline type
+  pipeline_is_stereo: False
+
+  # Feature and keyframe number
+  # To run faster, you can decrease `max_fts` and `max_n_kfs`, for example:
+  # max_fts: 120
+  # max_n_kfs: 5
+  # max_fts: 120
+  # max_n_kfs: 10
+  max_fts: 180
+  max_map_fts: 300
+  # max_fts: 220
+  max_n_kfs: 10
+  quality_min_fts: 40
+
+  # Map scale when initialized (not used for stereo)
+  # Increase if the initial scene depth is larger
+  map_scale: 1.5
+
+  # Initial rotation
+  T_world_imuinit/qx: 0
+  T_world_imuinit/qy: 0
+  T_world_imuinit/qz: 0
+  T_world_imuinit/qw: 1
+
+  # Keyframe selection
+  kfselect_criterion: FORWARD    # alterntive: DOWNLOOKING
+  # The following kfselect_* ONLY affects FORWARD
+  # If the number of features: >upper, no keyframe; <lower, take keyframe
+  kfselect_numkfs_upper_thresh: 140
+  kfselect_numkfs_lower_thresh: 100
+  # If the current frame is within the following range of any visible keyframes,
+  # do not take a new keyframe.
+  # You can lower these values for more keyframes
+  kfselect_min_dist_metric: 0.1
+  kfselect_min_angle: 20
+  # If the median disparity from the last keyframe is smaller,
+  # do not take a new keyframe
+  # You can lower this value for more keyframes
+  kfselect_min_disparity: 40
+  # When taking a new keyframe,
+  # we can already update the newly initialized seeds with old keyframes.
+  # This is important for forward looking case.
+  update_seeds_with_old_keyframes: True
+
+  # Default affine compensation parameters
+  # Most of the parameters are set to false for the consideration of processing time.
+  # If you observe bad tracking because of light/expousre change,
+  # enable the following parameters.
+  img_align_est_illumination_gain: true
+  img_align_est_illumination_offset: true
+  depth_filter_affine_est_offset: true
+  depth_filter_affine_est_gain: false
+  reprojector_affine_est_offset: true
+  reprojector_affine_est_gain: false
+
+  ########################################
+  ###### Tuning for each module ##########
+  ########################################
+  # Initialization
+  # For a higher resolution, increase the value accordingly.
+  init_min_features: 60
+  init_min_disparity: 30
+
+  # Feature Detection
+  grid_size: 25 # Larger for larger images, for every cell you have max one feature.
+  n_pyr_levels: 3 # Increase for larger images (image align max minus one)
+  detector_threshold_primary: 10 # Fast detector threshold
+  detector_threshold_secondary: 200 # Edgelet detector threshold
+  detector_threshold_shitomasi: 50 # Map Point detector threshold
+
+  # Image Alignment
+  img_align_max_level: 4 # Increase this level by one if the image is double the width and height (752x480).
+  img_align_min_level: 2
+
+  # Reprojection
+  use_async_reprojectors: False # For stereo, change it to True for multithreading.
+  reprojector_max_n_kfs: 5 # Local map size. Larger is computationally more intensive. More reduces drift.
+  scan_epi_unit_sphere: False # for wide angle lens, set it to True.
+  reproject_unconverged_seeds: True
+  max_unconverged_seeds_ratio: 0.2
+
+  # Pose Optimization
+  poseoptim_thresh: 2.0 # Reprojection outlier threshold (px), should be larger for larger  images.
+  poseoptim_using_unit_sphere: False # For wide angle lens, set it to True
+
+  # Depth Filter
+  # How many times does the covariance need to decrease until a seed is considered converged.
+  # Increase to get more accurate points
+  seed_convergence_sigma2_thresh: 200
+  mappoint_convergence_sigma2_thresh: 500
+
+  relocalization_max_trials: 5
+
+  # IMU
+  # Normally the prior should be 0 if not using IMU.
+  use_imu: true
+  poseoptim_prior_lambda: 0.0 # Gyroscope prior in pose optimization
+  img_align_prior_lambda_rot: 0.5 # Gyroscope prior in sparse image alignment
+  img_align_prior_lambda_trans: 0.0 # Constant velocity assumption prior in sparse image alignment
+
+  # Dense input
+  publish_every_nth_dense_input: 5
+
+  # Visualization
+  publish_marker_scale: 0.5
+  publish_active_kfs: True
+
+  # Stereo parameters, not used for mono.
+  max_depth_inv: 0.05
+  min_depth_inv: 1.0
+  mean_depth_inv: 0.3
+
+  ##############################
+  ##### Backend parameters #####
+  ##############################
+  use_ceres_backend: true
+  ceres_verbose: false
+  ceres_marginalize: true
+  ceres_num_iterations: 3
+  ceres_num_imu_frames: 3 
+  ceres_max_iteration_time: -1.0 # soft limit, set to -1 to deactivate
+  publish_marker_scale_backend: 0.5 # set to -1 to deactivate visualization of landmarks
+  backend_only_use_corners: false
+  backend_scale_stable_thresh: 0.02
+  
+  # For Loop Correction
+  ransac3d_inlier_percent: 35
+
+  # outlier rejection
+  use_outlier_rejection: true
+  outlier_rejection_px_threshold: 2.0
+
+  # Zero Motion Detection
+  backend_use_zero_motion_detection: true
+  backend_zero_motion_check_n_frames: 5
+  zero_motion_px_diff_threshold: 0.2 # decrease with lower resolution
+  zero_motion_ratio_moving_pixels_threshold: 0.1 
+  zero_motion_min_number_correspondences: 5
+  zero_motion_max_features_to_check: 15
+  zero_motion_sigma: 0.1
+  
+ # fixed_frame_rate: -1
+
+  # Loop closing
+  ceres_remove_marginalization_term_after_loop: true
+  ceres_recalculate_imu_terms_after_loop: true
+
+  ##############################
+  ##### Loop Closing parameters #####
+  ##############################
+  # Flag to enable/disable loop closing
+  runlc: True
+  # Name of the file which stores the BOW vocabulary #
+  voc_name: voc_GEN_8X4.yml.gz
+  # Data Extraction Threshold #
+  alpha: 0.8
+  # Loop Closure Detection Threshold #
+  beta: 0.8
+  # Number of past frames to ignore when looking for loop closures #
+  frames_to_ignore: 20
+  # Approach to use for scale retrieval in monocular case #
+  # 1. Common Landmarks Method #
+  # 2. Mixed Keypoints Method #
+  scale_retrieval_approach: -1
+  # Bag of Words match threshold #
+  bow_thresh: 0.65
+  # Geometric Verification Threshold i.e Minimum Percentage of Inliers #
+  #gv_thresh: 40.0
+  gv_thresh: 40.0
+  # Minimum 3d matches needed for good loop closing #
+  min_num_3d: 10
+  # Distance threshold when matching ORB features #
+  orb_dist_thresh: 48
+  # Minimum percentage of matches in geometric verification #
+  match_thresh: 0.15
+  # use opengv for ransac during geometric verification
+  use_opengv: true
+  # Enable this option to log images and inlier matches between loop closure frames */
+  enable_image_logging: false
+  # Path to the folder where images will be locked. Make sure folder is already created */
+  image_log_base_path: /tmp/loopclosure_log/
+
+############################
+##### List of Datasets #####
+############################
+datasets:
+  - name: euroc/stereo/MH_01
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 3660
+  - name: euroc/stereo/MH_02
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 3015
+  - name: euroc/stereo/MH_03
+    settings:
+      dataset_first_frame: 300
+      dataset_last_frame: 2645
+  - name: euroc/stereo/MH_04
+    settings:
+      dataset_first_frame: 340
+      dataset_last_frame: 1985
+  - name: euroc/stereo/MH_05
+    settings:
+      dataset_first_frame: 350
+      dataset_last_frame: 2245
+  - name: euroc/stereo/V1_01
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 2860
+  - name: euroc/stereo/V1_02
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 1685
+  - name: euroc/stereo/V1_03
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 2050
+  - name: euroc/stereo/V2_01
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 2190
+  - name: euroc/stereo/V2_02
+    settings:
+      dataset_first_frame: 100
+      dataset_last_frame: 2290
+  - name: euroc/stereo/V2_03
+    settings:
+      dataset_first_frame: 0
+      dataset_last_frame: 1875

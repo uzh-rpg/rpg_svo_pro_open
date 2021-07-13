@@ -1,0 +1,16 @@
+cam0:
+  cam_model: PinholeNoDistortion
+  cam_width: 752
+  cam_height: 480
+  cam_fx: 315.5 # approximately 100deg field of view
+  cam_fy: 315.5
+  cam_cx: 376.0
+  cam_cy: 240.0
+  T_cam_body:
+    tx: 0.0
+    ty: 0.0
+    tz: 0.0
+    qx: 0.0
+    qy: 0.0
+    qz: 0.0
+    qw: 1.0

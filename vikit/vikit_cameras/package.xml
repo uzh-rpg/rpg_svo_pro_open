@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>vikit_cameras</name>
+  <version>0.0.0</version>
+  <description>The vikit_cameras package</description>
+  <maintainer email="forster@ifi.uzh.ch">cforster</maintainer>
+  <license>GPLv3</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>eigen_catkin</depend>
+  <depend>eigen_checks</depend>
+  <depend>cv_bridge</depend>
+  <depend>glog_catkin</depend>
+  <depend>minkindr</depend>
+  <depend>svo_cmake</depend>
+  <depend>vikit_common</depend>
+  <depend>yaml-cpp</depend>
+
+  <test_depend>gtest</test_depend>
+
+</package>

@@ -1,0 +1,15 @@
+distortion:
+  parameters:
+    cols: 1
+    rows: 0
+    data: []
+  type: none
+image_height: 376
+image_width: 1241
+intrinsics:
+  cols: 1
+  data: [7.188560000000e+02, 7.188560000000e+02, 6.071928000000e+02, 1.852157000000e+02]
+  rows: 4
+label: cam0
+line-delay-nanoseconds: 0
+type: pinhole

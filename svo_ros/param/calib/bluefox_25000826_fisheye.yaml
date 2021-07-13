@@ -1,0 +1,26 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 0
+        data: []
+      type: none
+    image_height: 480
+    image_width: 752
+    intrinsics:
+      cols: 1
+      data: [-2.065170e+02, 0.000000e+00, 2.207161e-03, -4.879622e-06, 1.865656e-08, 394.552874, 241.800066, 1.000330, 0.000219, 0.000257, 294.182260, 152.289570, -12.191217, 27.959546, 8.241525, -1.970397, 10.689256, 1.871609, -6.437684, 0.430037, 3.215544, 0.921484, 0.0, 1.0]
+      rows: 24
+    label: cam0
+    line-delay-nanoseconds: 0
+    type: omni
+    mask: 25000826_fisheye_mask.png
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [ 1., 0., 0., 0.0,
+            0., 1., 0., 0.0,
+            0., 0., 1., 0.0,
+            0., 0., 0., 1.]
+label: /fisheye_ocam_model

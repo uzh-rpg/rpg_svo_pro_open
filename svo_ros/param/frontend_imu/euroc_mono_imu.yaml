@@ -1,0 +1,32 @@
+grid_size: 35
+use_imu: True
+poseoptim_prior_lambda: 0.0
+img_align_prior_lambda_rot: 0.5
+img_align_prior_lambda_trans: 0.0
+
+# If set to false, we process the next frame(s) only when the depth update is finished
+use_threaded_depthfilter: False
+# If the number of features are below this number, consider as failure
+quality_min_fts: 40
+# If the number of features reduce by this number for consecutive frames, consider as failure
+quality_max_drop_fts: 80
+
+map_scale: 5.0
+kfselect_criterion: FORWARD
+kfselect_numkfs_upper_thresh: 180
+kfselect_numkfs_lower_thresh: 90
+kfselect_min_dist_metric: 0.001
+kfselect_min_angle: 6
+kfselect_min_disparity: 40
+kfselect_min_num_frames_between_kfs: 1
+
+img_align_est_illumination_gain: true
+img_align_est_illumination_offset: true
+depth_filter_affine_est_offset: true
+depth_filter_affine_est_gain: true
+reprojector_affine_est_offset: true
+reprojector_affine_est_gain: true
+
+
+# Disable ceres backend
+use_ceres_backend: false

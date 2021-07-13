@@ -1,0 +1,57 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 4
+        data: [0.2250580451135414, 0.217092209159718, -0.05534881782056823, 0.16384768043077721]
+      type: equidistant
+    image_height: 260
+    image_width: 346
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [198.71975957912073, 198.68261014084223, 163.13401862233954, 143.59070352169638]
+    label: cam
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [0.9998587625507148, -0.004714386087811226, 0.016131630865084918, 0.0023346688143100354,
+      0.004662404240121532, 0.9999838221198609, 0.003258448289491574, 0.00451539719168432,
+      -0.016146731472778172, -0.0031827758904210924, 0.9998645673291842, 0.017022713557484578,
+      0.0, 0.0, 0.0, 1.0]
+  serial_no: 0
+  calib_date: 0
+  description: DAVIS-cam
+label: DAVIS-03460003
+
+imu_params:
+  delay_imu_cam: -0.002608748303665296
+  max_imu_delta_t: 0.01
+  acc_max: 155.0
+  omega_max: 34
+  sigma_omega_c: 5.0e-4
+  sigma_acc_c: 4.0e-2
+  sigma_omega_bias_c: 1.2e-07
+  sigma_acc_bias_c: 1.0e-2
+  sigma_integration: 0.0
+  g: 9.8082
+  imu_rate: 1000.0
+
+imu_initialization:
+  velocity: [0.0, 0.0, 0.0]
+  omega_bias: [0.0, 0.0, 0.0]
+  acc_bias: [0.0, 0.0, 0.0]
+  velocity_sigma: 1.0
+  omega_bias_sigma: 0.05
+  acc_bias_sigma: 0.4
+
+# IMU initialization
+imu_bias/ax: 0.24937
+imu_bias/ay: 0.30818
+imu_bias/az: 2.30426
+imu_bias/wx: 0.01517
+imu_bias/wy: 0.02372
+imu_bias/wz: -0.00498

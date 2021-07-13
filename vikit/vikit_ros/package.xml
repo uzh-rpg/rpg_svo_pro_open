@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>vikit_ros</name>
+  <version>0.0.0</version>
+  <description>The vikit_ros package</description>
+  <maintainer email="forster@ifi.uzh.ch">cforster</maintainer>
+  <license>RPG</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>svo_cmake</depend>
+  <depend>vikit_common</depend>
+  <depend>glog_catkin</depend>
+  <depend>eigen_catkin</depend>
+  <depend>minkindr</depend>
+
+  <depend>roscpp</depend>
+  <depend>tf</depend>
+  <depend>visualization_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>sensor_msgs</depend>
+
+</package>

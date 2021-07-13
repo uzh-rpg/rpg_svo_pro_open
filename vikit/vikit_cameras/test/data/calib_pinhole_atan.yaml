@@ -1,0 +1,17 @@
+cam0:
+  cam_model: PinholeAtan
+  cam_width: 752
+  cam_height: 480
+  cam_fx: 0.514243
+  cam_fy: 0.802408
+  cam_cx: 0.472366
+  cam_cy: 0.553086
+  cam_d0: 0.934479
+  T_cam_body: 
+    tx: 0.0
+    ty: 0.0
+    tz: -0.02
+    qx: -1.0
+    qy: 0.0
+    qz: 0.0
+    qw: 0.0

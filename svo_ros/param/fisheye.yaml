@@ -1,0 +1,29 @@
+max_fts: 180
+grid_size: 25
+map_scale: 5
+
+kfselect_criterion: FORWARD
+kfselect_numkfs_upper_thresh: 120
+kfselect_numkfs_lower_thresh: 40
+kfselect_min_dist_metric: 0.2
+kfselect_min_angle: 10
+kfselect_min_disparity: 25
+update_seeds_with_old_keyframes: True
+
+T_world_imuinit/qx: 1
+T_world_imuinit/qy: 0
+T_world_imuinit/qz: 0
+T_world_imuinit/qw: 0
+
+publish_every_nth_dense_input: 5
+publish_marker_scale: 0.8
+
+# fisheye specific
+# the distortion of fisheye is not negligible,
+# therefore the jacobian need to be considered
+img_align_use_distortion_jacobian: True
+# pose optimization and epipolar search should be done on unit sphere
+poseoptim_using_unit_sphere: True
+scan_epi_unit_sphere: True
+
+use_ceres_backend: False

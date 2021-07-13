@@ -1,0 +1,283 @@
+# Automatic initialisation
+automatic_reinitialization: True
+
+# Pipeline type
+pipeline_is_stereo: False
+
+# Feature and keyframe number
+# To run faster, you can decrease `max_fts` and `max_n_kfs`, for example:
+# fast
+max_fts: 150
+# slow
+#max_fts: 180
+max_n_kfs: 10
+quality_min_fts: 20
+quality_max_drop_fts: 100
+
+# Map scale when initialized (not used for stereo)
+# Increase if the initial scene depth is larger
+map_scale: 1.5
+
+# Initial rotation
+T_world_imuinit/qx: 0
+T_world_imuinit/qy: 0
+T_world_imuinit/qz: 0
+T_world_imuinit/qw: 1
+
+# Keyframe selection
+kfselect_criterion: FORWARD    # alterntive: DOWNLOOKING
+# The following kfselect_* ONLY affects FORWARD
+# If the number of features: >upper, no keyframe; <lower, take keyframe
+# fast
+kfselect_numkfs_upper_thresh: 120
+kfselect_numkfs_lower_thresh: 70
+# slow
+#kfselect_numkfs_upper_thresh: 140
+#kfselect_numkfs_lower_thresh: 80
+# If the current frame is within the following range of any visible keyframes,
+# do not take a new keyframe.
+# You can lower these values for more keyframes
+kfselect_min_dist_metric: 0.1
+kfselect_min_angle: 20
+# If the median disparity from the last keyframe is smaller,
+# do not take a new keyframe
+# You can lower this value for more keyframes
+kfselect_min_disparity: 10
+# When taking a new keyframe,
+# we can already update the newly initialized seeds with old keyframes.
+# This is important for forward looking case.
+update_seeds_with_old_keyframes: True
+
+kfselect_backend_max_time_sec: -1.0
+kfselect_min_num_frames_between_kfs: 1
+
+# Default affine compensation parameters
+# Most of the parameters are set to false for the consideration of processing time.
+# If you observe bad tracking because of light/expousre change,
+# enable the following parameters.
+img_align_est_illumination_gain: true
+img_align_est_illumination_offset: true
+depth_filter_affine_est_offset: true
+depth_filter_affine_est_gain: false
+reprojector_affine_est_offset: true
+reprojector_affine_est_gain: false
+
+# Handle tracking loss
+global_map_timeout_sec: 3.0
+
+########################################
+###### Tuning for each module ##########
+########################################
+# Initialization
+# For a higher resolution, increase the value accordingly.
+init_min_features: 60
+init_min_disparity: 30
+
+# Feature Detection
+grid_size: 25 # Larger for larger images, for every cell you have max one feature.
+n_pyr_levels: 3 # Increase for larger images (image align max minus one)
+detector_threshold_primary: 10 # Fast detector threshold
+detector_threshold_secondary: 200 # Edgelet detector threshold
+detector_threshold_shitomasi: 50 # Map Point detector threshold
+
+# Image Alignment
+img_align_max_level: 4 # Increase this level by one if the image is double the width and height (752x480).
+img_align_min_level: 2
+
+# Reprojection
+use_async_reprojectors: False # For stereo, change it to True for multithreading.
+reprojector_max_n_kfs: 5 # Local map size. Larger is computationally more intensive. More reduces drift.
+scan_epi_unit_sphere: False # for wide angle lens, set it to True.
+reproject_unconverged_seeds: True
+max_unconverged_seeds_ratio: 0.2
+reprojector_max_fixed_landmarks: 100
+reprojector_max_n_global_kfs: 30
+reprojector_fixed_lm_grid_size: 50
+
+# Pose Optimization
+poseoptim_thresh: 2.0 # Reprojection outlier threshold (px), should be larger for larger  images.
+poseoptim_using_unit_sphere: False # For wide angle lens, set it to True
+
+# Depth Filter
+# How many times does the covariance need to decrease until a seed is considered converged.
+# Increase to get more accurate points
+seed_convergence_sigma2_thresh: 200
+mappoint_convergence_sigma2_thresh: 500
+
+relocalization_max_trials: 5
+
+# IMU
+# Normally the prior should be 0 if not using IMU.
+use_imu: true
+poseoptim_prior_lambda: 0.0 # Gyroscope prior in pose optimization
+img_align_prior_lambda_rot: 0.5 # Gyroscope prior in sparse image alignment
+img_align_prior_lambda_trans: 0.0 # Constant velocity assumption prior in sparse image alignment
+
+# Dense input
+publish_every_nth_dense_input: 5
+
+# Visualization
+publish_marker_scale: 0.5
+publish_active_kfs: True
+
+# Stereo parameters, not used for mono.
+max_depth_inv: 0.05
+min_depth_inv: 1.0
+mean_depth_inv: 0.3
+
+##############################
+##### Backend parameters #####
+##############################
+use_ceres_backend: true
+ceres_verbose: false
+ceres_marginalize: true
+ceres_num_iterations: 3
+ceres_num_imu_frames: 3
+ceres_num_threads: 4
+ceres_max_iteration_time: 0.04 # soft limit, set to -1 to deactivate
+publish_marker_scale_backend: 0.5 # set to -1 to deactivate visualization of landmarks
+backend_only_use_corners: false
+backend_scale_stable_thresh: 0.02
+# fast
+ceres_max_fixed_landmarks: 50
+# slow
+#ceres_max_fixed_landmarks: 80
+
+backend_refine_extrinsics: false
+backend_extrinsics_pos_sigma_meter: 0.02
+backend_extrinsics_rot_sigma_deg: 3.0
+
+# outlier rejection
+use_outlier_rejection: true
+outlier_rejection_px_threshold: 2.0
+
+# Zero Motion Detection
+backend_use_zero_motion_detection: true
+backend_zero_motion_check_n_frames: 5
+zero_motion_px_diff_threshold: 0.2 # decrease with lower resolution
+zero_motion_ratio_moving_pixels_threshold: 0.1 
+zero_motion_min_number_correspondences: 5
+zero_motion_max_features_to_check: 15
+zero_motion_sigma: 0.1
+
+# fixed_frame_rate: -1
+
+# Loop closing
+ceres_remove_marginalization_term_after_loop: true
+ceres_recalculate_imu_terms_after_loop: true
+
+ceres_remove_fixation_min_num_fixed_points: 10
+
+##############################
+##### Loop Closing parameters #####
+##############################
+# Flag to enable/disable loop closing
+runlc: True
+# Name of the file which stores the BOW vocabulary #
+voc_name: voc_GEN_8X4.yml.gz
+# Data Extraction Threshold #
+alpha: 0.8
+# Loop Closure Detection Threshold #
+beta: 0.8
+# Number of past frames to ignore when looking for loop closures #
+frames_to_ignore: 20
+# Approach to use for scale retrieval in monocular case #
+# 1. Common Landmarks Method #
+# 2. Mixed Keypoints Method #
+scale_retrieval_approach: None
+# Bag of Words match threshold #
+bow_thresh: 0.65
+# Geometric Verification Threshold i.e minimum ratio of inliers #
+gv_3d_inlier_thresh: 0.4
+# Minimum 3d matches needed for good loop closing #
+min_num_3d: 10
+# Distance threshold when matching ORB features #
+orb_dist_thresh: 48
+# Minimum ratio of matches in geometric verification #
+gv_2d_match_thresh: 0.2
+# use opengv for ransac during geometric verification
+use_opengv: true
+# Enable this option to log images and inlier matches between loop closure frames */
+enable_image_logging: false
+# Path to the folder where images will be locked. Make sure folder is already created */
+image_log_base_path: /tmp/loopclosure_log/
+# For Loop Correction
+ransac3d_inlier_percent: 60
+
+proximity_dist_ratio: 0.01
+proximity_offset: 1.0
+
+global_map_type: ExternalGlobalMap
+
+force_correction_dist_thresh_meter: 0.1
+
+##############################
+# Global map
+##############################
+depth_filter_extra_map_points: True
+max_map_fts: 200
+reprojector_use_kfs_from_global_map: True
+refine_extrinsics: True
+
+use_global_map: True
+# initialization
+gm_init_min_frame_opt: 15
+gm_init_min_lm_obs_frame: 8
+gm_use_smart_factor: False
+gm_debug_fix_all_poses: False
+gm_print_stdcout: False
+gm_use_imu: True
+gm_use_thread: True
+gm_verbose: False
+gm_only_add_every_n: -1
+gm_optimize_every_n: -1
+gm_point_stable_thresh_meter: -1.0
+gm_inc_version_stable_ratio: -1.0
+
+# reobsrevation
+gm_add_reprojected_fixed_landmark: true
+gm_max_reprojected_fixed_landmark_each_frame: 20
+gm_ignore_redundant_landmarks: false
+gm_ignore_grid_size: 25
+gm_fix_lm_reobs_threshold: -1
+
+# point adding and fixation
+gm_min_num_obs: 3
+gm_pt_cond_thresh: -1
+gm_pt_sigma_thresh: 0.5
+gm_max_point_age: 10
+gm_min_parallax_deg: 5.0
+gm_add_range_prior_to_good_pt: True
+gm_use_edgelet: False
+gm_use_map_point: True
+gm_map_point_min_obs: 5
+
+# frame: fix with respect to previous one
+gm_use_relative_pose_fixation: True
+gm_relative_prior_with_imu_min_time_sec: -1.0
+gm_frame_fixation_release_check: False
+gm_relative_min_common_obs: 10
+gm_relative_release_min_common_obs: 40
+gm_relative_pos_sigma_meter: 0.1
+gm_relative_rot_sigma_deg: 5.0
+
+# query
+gm_query_frame_min_3d_points: 20
+
+# gtsam related
+ba_use_bearing_factor: True
+ba_pos_sigma_meter: 0.000001
+ba_rot_sigma_degree: 0.000001
+ba_init_roll_pitch_sigma_degree: 45.0
+ba_point_sigma_meter: 0.0001
+
+ba_max_iterations_per_update: 10
+ba_min_iterations_per_update: 3
+ba_max_time_sec_per_update: 5.0
+
+ba_use_robust_px_noise: True
+isam_relinearize_thresh: 0.01
+isam_relinearize_skip: 5
+isam_wildfire_thresh: 0.001
+isam_optimization_method: GaussNewton
+ba_smart_reproj_outlier_thresh_px: 15.0
