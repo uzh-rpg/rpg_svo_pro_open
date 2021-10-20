@@ -1,17 +1,21 @@
 # rpg_svo_pro
 
-This is the implementation of Semi-direct Visual Odometry (SVO) developed at RPG. SVO is a fast and versatile visual front-end as described in the [SVO paper (TRO-17)](http://rpg.ifi.uzh.ch/docs/TRO17_Forster-SVO.pdf). Different extensions have been integrated into SVO through various research and industrial projects over the past few years. In summary, this repository offers the following functionalities:
+This is repo includes **SVO Pro** which is the newest version of Semi-direct Visual Odometry (SVO) developed over the past few years at the Robotics and Perception Group (RPG).
+SVO was born as a fast and versatile visual front-end as described in the [SVO paper (TRO-17)](http://rpg.ifi.uzh.ch/docs/TRO17_Forster-SVO.pdf). Since then, different extensions have been integrated through various research and industrial projects.
+SVO Pro features the support of different [camera models](http://rpg.ifi.uzh.ch/docs/ICRA16_Zhang.pdf), [active exposure control](http://rpg.ifi.uzh.ch/docs/ICRA17_Zhang.pdf), a sliding window based backend, and global bundle adjustment with loop closure.
 
-* SVO 2.0 that supports perspective, fisheye and stereo cameras
-* Visual-inertial odometry: SVO 2.0 + visual-inertial sliding window optimization backend (modified from [OKVIS](https://github.com/ethz-asl/okvis))
-* Visual-inertial SLAM: SVO 2.0 + visual-inertial backend +  globally bundle adjusted map using iSAM2. The global map is updated in real-time (thanks to iSAM2) and used for localization at frame-rate.
-* Loop closure via [DBoW2](https://github.com/dorian3d/DBoW2) and pose graph is also supported for a lightweight, globally consistent (but not so accurate) map.
+In summary, this repository offers the following functionalities:
+
+* Visual-odometry: The most recent version of SVO that supports perspective and fisheye/catadioptric cameras in monocular or stereo setup. It also includes active exposure control.
+* Visual-inertial odometry: SVO fronted + visual-inertial sliding window optimization backend (modified from [OKVIS](https://github.com/ethz-asl/okvis))
+* Visual-inertial SLAM: SVO frontend + visual-inertial sliding window optimization backend +  globally bundle adjusted map (using [iSAM2](https://gtsam.org/)). The global map is updated in real-time, thanks to iSAM2, and used for localization at frame-rate.
+* Visual-inertial SLAM with loop closure: Loop closures, via [DBoW2](https://github.com/dorian3d/DBoW2), are integrated in the global bundle adjustment. Pose graph optimization is also included as a lightweight replacement of the global bundle adjustment.
 
 An example of the visual-inertial SLAM pipeline on EuRoC dataset is below (green points - sliding window; blue points - iSAM2 map):
 
 ![](./doc/images/v102_gm.gif)
 
-SVO 2.0 and its extensions have been used to support various projects at RPG, such as our recent work on [multiple camera SLAM](http://rpg.ifi.uzh.ch/docs/ICRA20_Kuo.pdf), [voxel map for visual SLAM](http://rpg.ifi.uzh.ch/docs/ICRA20_Muglikar.pdf) and [the tight-coupling of global positional measurements into VIO](http://rpg.ifi.uzh.ch/docs/IROS20_Cioffi.pdf). We hope that the efforts we made can facilitate the research and applications of SLAM and spatial perception.
+SVO Pro and its extensions have been used to support various projects at RPG, such as our recent work on [multiple camera SLAM](http://rpg.ifi.uzh.ch/docs/ICRA20_Kuo.pdf), [voxel map for visual SLAM](http://rpg.ifi.uzh.ch/docs/ICRA20_Muglikar.pdf) and [the tight-coupling of global positional measurements into VIO](http://rpg.ifi.uzh.ch/docs/IROS20_Cioffi.pdf). We hope that the efforts we made can facilitate the research and applications of SLAM and spatial perception.
 
 ## License
 
@@ -21,7 +25,7 @@ The visual-inertial backend is modified from OKVIS, and the license is retained 
 
 ## Credits
 
-If you used the code in academic context, please cite:
+If you use the code in academic context, please cite:
 
 * Christian Forster, Matia Pizzoli, Davide Scaramuzza. SVO: Fast Semi-Direct Monocular Visual Odometry. ICRA, 2014. [bibtex](./doc/bib/Forster14icra.bib)
 * Christian Forster, Zichao Zhang, Michael Gassner, Manuel Werlberger, Davide Scaramuzza. SVO: Semi-Direct Visual Odometry for Monocular and Multi-Camera Systems. TRO, 2017. [bibtex](./doc/bib/Forster17tro.bib)
@@ -33,6 +37,12 @@ Additionally, please cite the following papers for the specific extensions you m
 * *Ceres-based optimization backend*: Stefan Leutenegger, Simon Lynen, Michael Bosse, Roland Siegwart, Paul Timothy Furgale. Keyframe-based visual–inertial odometry using nonlinear optimization. IJRR, 2015. [bibtex](./doc/bib/Leutenegger15ijrr.bib)
 * *Global map powered by iSAM2*: Michael Kaess, Hordur Johannsson, Richard Roberts, Viorela Ila, John Leonard, Frank Dellaert. iSAM2: Incremental Smoothing and Mapping Using the Bayes Tree. IJRR, 2012. [bibtex](./doc/bib/Kaess12ijrr.bib)
 * *Loop closure*: Dorian Gálvez-López and Juan D. Tardós. Bags of Binary Words for Fast Place Recognition in Image Sequences. TRO, 2012. [bibtex](./doc/bib/Galvez12tro.bib)
+
+Recent works that use SVO Pro are:
+
+* *Multiple camera SLAM*: Juichung Kuo, Manasi Muglikar, Zichao Zhang, Davide Scaramuzza. Redesigning SLAM for Arbitrary Multi-Camera Systems. ICRA, 2020. [bibtex](./doc/bib/Kuo20icra.bib)
+* *Voxel map for visual SLAM*: Manasi Muglikar, Zichao Zhang, Davide Scaramuzza. Voxel Map for Visual SLAM. ICRA, 2020. [bibtex](./doc/bib/Muglikar20icra.bib)
+* *Tight-coupling of global positional measurements into VIO*: Giovanni Cioffi, Davide Scaramuzza. Tightly-coupled Fusion of Global Positional Measurements in Optimization-based Visual-Inertial Odometry. IROS, 2020. [bibtex](./doc/bib/Cioffi20iros.bib)
 
 ## Install
 
