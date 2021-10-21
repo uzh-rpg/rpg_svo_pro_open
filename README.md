@@ -1,6 +1,6 @@
 # rpg_svo_pro
 
-This is repo includes **SVO Pro** which is the newest version of Semi-direct Visual Odometry (SVO) developed over the past few years at the Robotics and Perception Group (RPG).
+This repo includes **SVO Pro** which is the newest version of Semi-direct Visual Odometry (SVO) developed over the past few years at the Robotics and Perception Group (RPG).
 SVO was born as a fast and versatile visual front-end as described in the [SVO paper (TRO-17)](http://rpg.ifi.uzh.ch/docs/TRO17_Forster-SVO.pdf). Since then, different extensions have been integrated through various research and industrial projects.
 SVO Pro features the support of different [camera models](http://rpg.ifi.uzh.ch/docs/ICRA16_Zhang.pdf), [active exposure control](http://rpg.ifi.uzh.ch/docs/ICRA17_Zhang.pdf), a sliding window based backend, and global bundle adjustment with loop closure.
 
