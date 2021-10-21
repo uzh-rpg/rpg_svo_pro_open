@@ -38,7 +38,7 @@ Additionally, please cite the following papers for the specific extensions you m
 * *Global map powered by iSAM2*: Michael Kaess, Hordur Johannsson, Richard Roberts, Viorela Ila, John Leonard, Frank Dellaert. iSAM2: Incremental Smoothing and Mapping Using the Bayes Tree. IJRR, 2012. [bibtex](./doc/bib/Kaess12ijrr.bib)
 * *Loop closure*: Dorian Gálvez-López and Juan D. Tardós. Bags of Binary Words for Fast Place Recognition in Image Sequences. TRO, 2012. [bibtex](./doc/bib/Galvez12tro.bib)
 
-Our recent publiactions that use SVO Pro are:
+Our recent publications that use SVO Pro are:
 
 * *Multiple camera SLAM*: Juichung Kuo, Manasi Muglikar, Zichao Zhang, Davide Scaramuzza. Redesigning SLAM for Arbitrary Multi-Camera Systems. ICRA, 2020. [bibtex](./doc/bib/Kuo20icra.bib)
 * *Voxel map for visual SLAM*: Manasi Muglikar, Zichao Zhang, Davide Scaramuzza. Voxel Map for Visual SLAM. ICRA, 2020. [bibtex](./doc/bib/Muglikar20icra.bib)
