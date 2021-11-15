@@ -251,6 +251,8 @@ bool Estimator::addStates(const FrameBundleConstPtr& frame_bundle,
     information(0,0) = 1.0e8;
     information(1,1) = 1.0e8;
     information(2,2) = 1.0e8;
+    information(3,3) = 1.0e-8; // numeric issue
+    information(4,4) = 1.0e-8; // numeric issue
     std::shared_ptr<ceres_backend::PoseError > pose_error =
         std::make_shared<ceres_backend::PoseError>(T_WS, information);
     map_ptr_->addResidualBlock(pose_error, nullptr, pose_parameter_block);
@@ -563,7 +565,7 @@ bool Estimator::addVelocityPrior(BackendId nframe_id,
   Eigen::Matrix<double, 9, 9> information;
   information.setIdentity();
   information.topLeftCorner<3, 3>() *= speed_information;
-  information.bottomLeftCorner<6, 6>() *= bias_information;
+  information.bottomRightCorner<6, 6>() *= bias_information;
   std::shared_ptr<ceres_backend::SpeedAndBiasError> prior =
       std::make_shared<ceres_backend::SpeedAndBiasError>(speed_and_bias, information);
   ceres::ResidualBlockId id =
@@ -1663,6 +1665,8 @@ bool Estimator::setFrameFixed(const BundleId &fixed_frame_bundle_id,
           information(1, 1) = 1.0e35;
           information(2, 2) = 1.0e35;
           information(5, 5) = 1.0e35;
+          information(3, 3) = 1.0e-8; // numeric issue
+          information(4, 4) = 1.0e-8; // numeric issue
           std::shared_ptr<ceres_backend::PoseError> pose_error =
               std::make_shared<ceres_backend::PoseError>(T_WS_new, information);
           std::shared_ptr<ceres_backend::PoseParameterBlock> block_ptr =
@@ -1694,6 +1698,8 @@ void Estimator::setOldestFrameFixed()
   information(1, 1) = 1.0e14;
   information(2, 2) = 1.0e14;
   information(5, 5) = 1.0e14;
+  information(3, 3) = 1.0e-8; // numeric issue
+  information(4, 4) = 1.0e-8; // numeric issue
   std::shared_ptr<ceres_backend::PoseError> pose_error =
       std::make_shared<ceres_backend::PoseError>(T_WS_0, information);
   map_ptr_->addResidualBlock(
