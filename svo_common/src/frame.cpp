@@ -31,7 +31,7 @@ Frame::Frame(
     size_t n_pyr_levels)
   : id_(frame_counter_++) // TEMPORARY
   , cam_(cam)
-  , key_pts_(5, std::make_pair(-1, BearingVector()))
+  , key_pts_(5, std::make_pair(-1, BearingVector::Zero()))
   , timestamp_(timestamp_ns)
 {
   initFrame(img, n_pyr_levels);
@@ -45,7 +45,7 @@ Frame::Frame(
   : id_(id)
   , cam_(cam)
   , T_f_w_(T_world_cam.inverse())
-  , key_pts_(5, std::make_pair(-1, BearingVector()))
+  , key_pts_(5, std::make_pair(-1, BearingVector::Zero()))
   , timestamp_(timestamp_ns)
 {}
 
