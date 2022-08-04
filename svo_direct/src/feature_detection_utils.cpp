@@ -168,8 +168,8 @@ void fastDetector(
           img_pyr[level].rows, img_pyr[level].step, threshold, fast_corners);
 #else
     fast::fast_corner_detect_10(
-          (fast::fast_byte*) img_pyr[L].data, img_pyr[L].cols,
-          img_pyr[L].rows, img_pyr[L].step, threshold, fast_corners);
+          (fast::fast_byte*) img_pyr[level].data, img_pyr[level].cols,
+          img_pyr[level].rows, img_pyr[level].step, threshold, fast_corners);
 #endif
     std::vector<int> scores, nm_corners;
     fast::fast_corner_score_10((fast::fast_byte*) img_pyr[level].data, img_pyr[level].step,
