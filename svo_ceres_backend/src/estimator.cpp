@@ -563,7 +563,7 @@ bool Estimator::addVelocityPrior(BackendId nframe_id,
   Eigen::Matrix<double, 9, 9> information;
   information.setIdentity();
   information.topLeftCorner<3, 3>() *= speed_information;
-  information.bottomLeftCorner<6, 6>() *= bias_information;
+  information.bottomRightCorner<6, 6>() *= bias_information;
   std::shared_ptr<ceres_backend::SpeedAndBiasError> prior =
       std::make_shared<ceres_backend::SpeedAndBiasError>(speed_and_bias, information);
   ceres::ResidualBlockId id =
