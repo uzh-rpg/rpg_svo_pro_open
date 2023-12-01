@@ -38,3 +38,6 @@ RUN mkdir ~/.ssh &&\
 
 RUN cd svo_ws/src &&\
     catkin build --force-cmake -j8
+
+# OPTIONAL: Install test x11 utils (xclock, xeyes, etc)
+RUN apt install -y x11-apps mesa-utils
