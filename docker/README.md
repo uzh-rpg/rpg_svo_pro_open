@@ -23,20 +23,26 @@ wget http://rpg.ifi.uzh.ch/datasets/airground_rig_s3_2013-03-18_21-38-48.bag -P 
 xeyes       # tests x11
 glxgears    # tests openGL
 ```
-You should see an animated window from `glxgears` [like this](http://www.subdude-site.com/WebPages_Local/RefInfo/Computer/Linux/LinuxPerformance/3Dperformance/decopics/glxgears_screenshot_306x326.jpg), and a mouse responsive window from `xeyes` [like this](https://blog.dhampir.no/wp-content/uploads/2012/02/xeyes.png)
+You should see an animated window from `glxgears` [like this](http://www.subdude-site.com/WebPages_Local/RefInfo/Computer/Linux/LinuxPerformance/3Dperformance/decopics/glxgears_screenshot_306x326.jpg), and a mouse responsive window from `xeyes` [like this](https://blog.dhampir.no/wp-content/uploads/2012/02/xeyes.png). 
 
-4. Launch the docker image. The `--volume=$HOME/.Xauthority:/root/.Xauthority:rw` part is necessary for X11, and the `--volume /dev:/dev` part is necessary for openGL. 
+4. Make sure that forwarding is activated for docker:
+```
+sh
+xhost + local:docker
+```
+
+5. Launch the docker image. The `--volume=$HOME/.Xauthority:/root/.Xauthority:rw` part is necessary for X11, and the `--volume /dev:/dev` part is necessary for openGL. 
 ```sh
 docker run --net=host --env="DISPLAY" --volume=$HOME/.Xauthority:/root/.Xauthority:rw --volume /dev:/dev --volume $PWD/test_data:/test_data -it vio:latest
 ```
 
-5. Now that you are inside the docker container, test out the GUI forwarding. Should get the same results as you did when you tested earlier on your local machine.
+6. Now that you are inside the docker container, test out the GUI forwarding. Should get the same results as you did when you tested earlier on your local machine.
 ```sh
 xeyes       # tests x11
 glxgears    # tests openGL
 ```
 
-6. If the tests above are successful, then we can try and run the test Visual Odometry example:
+7. If the tests above are successful, then we can try and run the test Visual Odometry example:
 ```sh
 source svo_ws/devel/setup.bash
 roslaunch svo_ros run_from_bag.launch cam_name:=svo_test_pinhole &
