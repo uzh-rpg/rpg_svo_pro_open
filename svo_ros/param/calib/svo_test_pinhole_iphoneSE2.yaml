@@ -1,0 +1,25 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 1
+        data: [0.1]
+      type: fisheye
+    image_height: 1080
+    image_width: 1920
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [1094.4, 1094.4, 960.0, 540.0] # I am pretty sure these are fx, fy, px, py. Values based on that found from using OpenSFM on iphone SE2 movie data
+    label: iphoneSE2
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [1, 0, 0, 0,
+           0, 1, 0, 0,
+           0, 0, 1, 0,
+           0, 0, 0, 0]
+label: iphoneSE2
