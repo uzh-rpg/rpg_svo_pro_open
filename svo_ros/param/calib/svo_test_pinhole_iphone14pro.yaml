@@ -1,0 +1,46 @@
+cameras:
+- camera:
+    distortion:
+      parameters:
+        cols: 1
+        rows: 1
+        data: [0.1]
+      type: fisheye
+    image_height: 720
+    image_width: 1280
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [850.0, 850.0, 642.0, 362.0] # I am pretty sure these are fx, fy, px, py. Values based on that found from using OpenSFM on iphone SE2 movie data
+    label: iphone14pro
+    line-delay-nanoseconds: 0
+    type: pinhole
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [1, 0, 0, 0,
+           0, 1, 0, 0,
+           0, 0, 1, 0,
+           0, 0, 0, 0]
+label: iphone14pro
+
+# imu_params:
+#   delay_imu_cam: 0.0
+#   max_imu_delta_t: 0.01
+#   acc_max: 176.0
+#   omega_max: 7.8
+#   sigma_omega_c: 0.005
+#   sigma_acc_c: 0.01
+#   sigma_omega_bias_c: 4.0e-6
+#   sigma_acc_bias_c: 0.0002
+#   sigma_integration: 0.0
+#   g: 9.81007
+#   imu_rate: 200.0
+
+# imu_initialization:
+#   velocity: [0, 0, 0]
+#   omega_bias: [0, 0, 0]
+#   acc_bias: [0, 0, 0]
+#   velocity_sigma: 0.5
+#   omega_bias_sigma: 0.005
+#   acc_bias_sigma: 0.05
