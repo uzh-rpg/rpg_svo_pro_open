@@ -13,6 +13,7 @@
 #include <vikit/vision.h>
 #include <svo/common/camera.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/point.h>
 #include <svo/common/logging.h>
 #include <svo/common/seed.h>
@@ -637,8 +638,9 @@ bool setSeedCovariance(
   const int L = seed->ftr_->level;
   const cv::Mat& img = frame->img_pyr_[L];
   const int step = img.step;
-  const int u = seed->ftr_->px[0]/(1<<L);
-  const int v = seed->ftr_->px[1]/(1<<L);
+  const Keypoint px = pyramid::pixelToLevel(seed->ftr_->px, L);
+  const int u = px.x();
+  const int v = px.y();
 
   if(u-halfpatch_size < 0 || u+halfpatch_size >= img.cols
       || v-halfpatch_size < 0 || v+halfpatch_size >= img.rows)

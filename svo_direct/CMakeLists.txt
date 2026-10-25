@@ -58,6 +58,13 @@ catkin_add_gtest(${PROJECT_NAME}-test-depth-estimation
 )
 target_link_libraries(${PROJECT_NAME}-test-depth-estimation ${PROJECT_NAME} pthread)
 
+catkin_add_gtest(${PROJECT_NAME}-test-pyramid-geometry
+  test/test_pyramid_geometry.cpp
+)
+if(TARGET ${PROJECT_NAME}-test-pyramid-geometry)
+  target_link_libraries(${PROJECT_NAME}-test-pyramid-geometry ${PROJECT_NAME})
+endif()
+
 
 ################################################################################
 cs_install()

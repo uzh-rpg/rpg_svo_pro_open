@@ -272,8 +272,9 @@ __global__ void k_jacobianAndRefPatches(imp::cu::Texture2D ref_tex,
   {
     const FloatTypeGpu scale = 1.0f/(1<<level);
     const FloatTypeGpu patch_area = patch_size*patch_size;
-    const FloatTypeGpu upper_left_coord_x = uv[i].x*scale - (patch_size - 1)/2.0f;
-    const FloatTypeGpu upper_left_coord_y = uv[i].y*scale - (patch_size - 1)/2.0f;
+    // Match the pixel centres of the CPU halfSample() pyramid copied to the GPU.
+    const FloatTypeGpu upper_left_coord_x = (uv[i].x + 0.5f)*scale - 0.5f - (patch_size - 1)/2.0f;
+    const FloatTypeGpu upper_left_coord_y = (uv[i].y + 0.5f)*scale - 0.5f - (patch_size - 1)/2.0f;
     size_t ref_patch_index_offset = patch_area*i;
     size_t jacobian_index_offset = patch_area*GpuCacheHandler::kJacStride*i;
     size_t jac_proj_cache_index_offset = GpuCacheHandler::kJacProjStride*i;
@@ -399,8 +400,8 @@ __global__ void k_residuals(const imp::cu::Texture2D cur_tex,
     const int patch_area = patch_size*patch_size;
     Float2TypeGpu uv_cur = static_cast<Float2TypeGpu>(
           cam.world2cam(static_cast<Float3TypeGpu>(transform(T_cur_ref,xyz_ref[i]))));
-    const FloatTypeGpu upper_left_coord_x = uv_cur.x*scale - (patch_size - 1)/2.0f;
-    const FloatTypeGpu upper_left_coord_y = uv_cur.y*scale - (patch_size - 1)/2.0f;
+    const FloatTypeGpu upper_left_coord_x = (uv_cur.x + 0.5f)*scale - 0.5f - (patch_size - 1)/2.0f;
+    const FloatTypeGpu upper_left_coord_y = (uv_cur.y + 0.5f)*scale - 0.5f - (patch_size - 1)/2.0f;
 
     // Check if projection is within the image.
     if(upper_left_coord_x  < 0.0f || upper_left_coord_y  < 0.0f

@@ -16,6 +16,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/camera.h>
 #include <svo/common/logging.h>
 #include <svo/direct/feature_detection_types.h>
@@ -109,8 +110,8 @@ void fillFeatures(const Corners& corners,
       level_vec.emplace_back(c.level);
       score_vec.emplace_back(c.score);
       gradient_vec.emplace_back(GradientVector(std::cos(c.angle), std::sin(c.angle)));
-      grid.occupancy_[grid.getCellIndex(c.x, c.y)] = true;
-      grid.feature_occupancy_[grid.getCellIndex(c.x, c.y)] = Keypoint(c.x, c.y);
+      grid.occupancy_[grid.getCellIndex(Keypoint(c.x, c.y))] = true;
+      grid.feature_occupancy_[grid.getCellIndex(Keypoint(c.x, c.y))] = Keypoint(c.x, c.y);
     }
   }
 
@@ -156,7 +157,6 @@ void fastDetector(
 
   for(size_t level=min_level; level<=max_level; ++level)
   {
-    const int scale = (1<<level);
     std::vector<fast::fast_xy> fast_corners;
 #if __SSE2__
     fast::fast_corner_detect_10_sse2(
@@ -183,12 +183,13 @@ void fastDetector(
       fast::fast_xy& xy = fast_corners.at(i);
       if(xy.x < border || xy.y < border || xy.x >= maxw || xy.y >= maxh)
         continue;
-      const size_t k = grid.getCellIndex(xy.x, xy.y, scale);
+      const Keypoint px = pyramid::pixelToLevelZero(Keypoint(xy.x, xy.y), level);
+      const size_t k = grid.getCellIndex(px);
       if(grid.occupancy_.at(k))
         continue;
       const float score = scores.at(i); //vk::shiTomasiScore(img_pyr[L], xy.x, xy.y);
       if(score > corners.at(k).score)
-        corners.at(k) = Corner(xy.x*scale, xy.y*scale, score, level, 0.0f);
+        corners.at(k) = Corner(px.x(), px.y(), score, level, 0.0f);
     }
   }
 }
@@ -211,7 +212,6 @@ void shiTomasiDetector(
   {
     size_t nrows = img_pyr[level].rows;
     size_t ncols = img_pyr[level].cols;
-    const int scale = (1<<level);
     std::vector<Eigen::Vector2i> shitomasi_corners;
     std::vector<int> scores, nm_corners;
     for(size_t i=0; i<nrows; ++i)
@@ -237,11 +237,12 @@ void shiTomasiDetector(
       Eigen::Vector2i xy = shitomasi_corners.at(i);
       if(xy.x() < border || xy.y() < border || xy.x() >= maxw || xy.y() >= maxh)
         continue;
-      const size_t occ_k = grid.getCellIndex(xy.x(), xy.y(), scale);
+      const Keypoint px = pyramid::pixelToLevelZero(xy.cast<FloatType>(), level);
+      const size_t occ_k = grid.getCellIndex(px);
       if (grid.occupancy_.at(occ_k))
         continue;
       const size_t close_k =
-          closeness_check_grid.getCellIndex(xy.x(), xy.y(), scale);
+          closeness_check_grid.getCellIndex(px);
       if(closeness_check_grid.occupancy_.at(close_k))
       {
         Keypoint kp = closeness_check_grid.feature_occupancy_.at(close_k);
@@ -255,7 +256,7 @@ void shiTomasiDetector(
       const float score = scores.at(i); //vk::shiTomasiScore(img_pyr[L], xy.x, xy.y);
       if(score > corners.at(occ_k).score)
       {
-        corners.at(occ_k) = Corner(xy.x()*scale, xy.y()*scale, score, level, 0.0f);
+        corners.at(occ_k) = Corner(px.x(), px.y(), score, level, 0.0f);
       }
     }
   }
@@ -275,8 +276,6 @@ void edgeletDetector_V1(
 
   for(int level=min_level+1; level<=max_level; ++level) // note, we start one level higher, so we already have some smoothing
   {
-    const int scale = (1<<level);
-
     // compute image first derivative
     cv::Mat dx, dy;
     cv::Scharr(img_pyr[level], dx, CV_16S, 1, 0, 1, 0, cv::BORDER_DEFAULT);
@@ -291,15 +290,16 @@ void edgeletDetector_V1(
       int16_t* p_dy = dy.ptr<int16_t>(y);
       for(int x=border; x<max_col; ++x)
       {
-        const int k = grid.getCellIndex(x, y, scale);
+        const Keypoint px = pyramid::pixelToLevelZero(Keypoint(x, y), level);
+        const int k = grid.getCellIndex(px);
         if(grid.occupancy_.at(k))
           continue;
         Corner& c = corners.at(k);
         const double score = std::sqrt(p_dx[x]*p_dx[x]+p_dy[x]*p_dy[x]);
         if(score > c.score)
         {
-          c.x=x*scale;
-          c.y=y*scale;
+          c.x=px.x();
+          c.y=px.y();
           c.level=level-1;
           c.score=score;
           c.angle=std::atan2(p_dy[x],p_dx[x]);
@@ -322,7 +322,6 @@ void edgeletDetector_V2(
   CHECK_EQ(corners.size(), grid.occupancy_.size());
 
   constexpr int level = 1;
-  constexpr int scale = (1<<level);
   cv::Mat score(img_pyr[level].size(), CV_32FC1, cv::Scalar(0.0f));
   cv::Mat angle(img_pyr[level].size(), CV_8UC1, cv::Scalar(255));
 
@@ -354,7 +353,8 @@ void edgeletDetector_V2(
     const float* p = &score.at<float>(y,border);
     for(int x=border; x<score.cols-border; ++x, ++p)
     {
-      const int k = grid.getCellIndex(x, y, scale);
+      const Keypoint px = pyramid::pixelToLevelZero(Keypoint(x, y), level);
+      const int k = grid.getCellIndex(px);
       if(grid.occupancy_.at(k))
         continue;
 
@@ -374,8 +374,8 @@ void edgeletDetector_V2(
       Corner& c = corners.at(k);
       if(*p > c.score)
       {
-        c.x=x*scale;
-        c.y=y*scale;
+        c.x=px.x();
+        c.y=px.y();
         c.level=level-1;
         c.score=*p;
         c.angle = getAngleAtPixelUsingHistogram(img_pyr[level], Eigen::Vector2i(x,y), 4);
@@ -397,7 +397,7 @@ bool getCornerAngle(
   constexpr int kPatchSize = 2*kHalfPatchSize;
   constexpr int kHalfPatchSizePlusBorder = kHalfPatchSize + 1;
   const cv::Mat& img = img_pyr.at(level);
-  const Eigen::Vector2i px = (px_level_0 / (1 << level)).cast<int>();
+  const Eigen::Vector2i px = pyramid::pixelToLevel(px_level_0, level).cast<int>();
 
   if(px(0) < kHalfPatchSizePlusBorder
      || px(1) < kHalfPatchSizePlusBorder
@@ -479,7 +479,8 @@ void setCornerAngles(const ImgPyr& img_pyr, Corners* corners)
   const int stride = img_pyr[0].step;
   for(Corners::iterator it=corners->begin(); it!=corners->end(); ++it)
   {
-    uint8_t* p = (uint8_t*) img_pyr[0].data + it->y*stride + it->x;
+    uint8_t* p = (uint8_t*) img_pyr[0].data
+        + static_cast<int>(it->y)*stride + static_cast<int>(it->x);
     float dx = 0.5f*(p[1]-p[-1]);
     float dy = 0.5f*(p[stride]-p[-stride]);
     it->angle = std::atan2(dy, dx);
@@ -492,14 +493,13 @@ void setCornerLevel(const ImgPyr& mag_pyr, Corners* corners)
   const size_t max_level = mag_pyr.size();
   for(Corners::iterator it=corners->begin(); it!=corners->end(); ++it)
   {
-    float max_mag = mag_pyr[0].at<float>(it->y, it->x);
+    float max_mag = mag_pyr[0].at<float>(static_cast<int>(it->y), static_cast<int>(it->x));
     float max_lev = 0;
     for(size_t level=1; level<max_level; ++level)
     {
-      const int scale = 1.0f / (1<<level);
-      const int u = static_cast<int>(scale*it->x+0.5f);
-      const int v = static_cast<int>(scale*it->y+0.5f);
-      float mag = mag_pyr[level].at<float>(v,u);
+      const Eigen::Vector2i px =
+          (pyramid::pixelToLevel(Keypoint(it->x, it->y), level).array() + 0.5).cast<int>();
+      float mag = mag_pyr[level].at<float>(px.y(), px.x());
       if(mag > max_mag)
       {
         max_mag = mag;
@@ -736,7 +736,6 @@ void drawFeatures(
   CHECK_NOTNULL(img_rgb);
   CHECK_GT(frame.img_pyr_.size(), level);
 
-  const int scale = (1<<level);
   const int size = (level == 1) ? 2 : 0;
   *img_rgb = cv::Mat(frame.img_pyr_[level].size(), CV_8UC3);
   cv::cvtColor(frame.img_pyr_[level], *img_rgb, cv::COLOR_GRAY2RGB);
@@ -802,18 +801,18 @@ void drawFeatures(
     {
       if(frame.isValidLandmark(i))
       {
-        const auto& px = frame.px_vec_.col(i);
+        const Keypoint px = pyramid::pixelToLevel(frame.px_vec_.col(i), level);
         cv::rectangle(*img_rgb,
-                      cv::Point2f(px(0)/scale-size, px(1)/scale-size),
-                      cv::Point2f(px(0)/scale+size, px(1)/scale+size),
+                      cv::Point2f(px(0)-size, px(1)-size),
+                      cv::Point2f(px(0)+size, px(1)+size),
                       cv::Scalar(0,255,0), -1);
       }
       else if(isCornerEdgeletSeed(frame.type_vec_[i]))
       {
-        const auto& px = frame.px_vec_.col(i);
+        const Keypoint px = pyramid::pixelToLevel(frame.px_vec_.col(i), level);
         cv::rectangle(*img_rgb,
-                      cv::Point2f(px(0)/scale-size, px(1)/scale-size),
-                      cv::Point2f(px(0)/scale+size, px(1)/scale+size),
+                      cv::Point2f(px(0)-size, px(1)-size),
+                      cv::Point2f(px(0)+size, px(1)+size),
                       cv::Scalar(255,0,255), -1);
       }
 //      else if(isMapPoint(frame.type_vec_[i]))

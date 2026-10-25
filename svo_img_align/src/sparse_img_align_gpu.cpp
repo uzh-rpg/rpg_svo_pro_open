@@ -7,6 +7,7 @@
 // 'LICENSE', which is part of this source code package.
 
 #include <svo/img_align/sparse_img_align_gpu.h>
+#include <svo/common/pyramid.h>
 
 #include <algorithm>
 
@@ -275,7 +276,6 @@ void extractFeaturesSubset(const Frame& ref_frame,
                            size_t& nr_fts_extracted,
                            HostCacheHandler& host_cache)
 {
-  const FloatTypeGpu scale = 1.0f/(1<<max_level);
   const Vector3ft ref_pos = ref_frame.pos();
   const cv::Mat& ref_img = ref_frame.img_pyr_.at(max_level);
   const int rows_minus_one = ref_img.rows - 1;
@@ -291,8 +291,10 @@ void extractFeaturesSubset(const Frame& ref_frame,
       continue;
     }
 
-    const FloatTypeGpu u_tl = ref_frame.px_vec_(0,i)*scale - patch_center_wb;
-    const FloatTypeGpu v_tl = ref_frame.px_vec_(1,i)*scale - patch_center_wb;
+    const Eigen::Matrix<FloatTypeGpu, 2, 1> px = pyramid::pixelToLevel(
+        ref_frame.px_vec_.col(i).cast<FloatTypeGpu>(), max_level);
+    const FloatTypeGpu u_tl = px.x() - patch_center_wb;
+    const FloatTypeGpu v_tl = px.y() - patch_center_wb;
     const int u_tl_i = std::floor(u_tl);
     const int v_tl_i = std::floor(v_tl);
     if(!(u_tl_i < 0 || v_tl_i < 0

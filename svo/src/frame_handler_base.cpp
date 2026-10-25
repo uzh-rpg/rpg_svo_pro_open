@@ -15,6 +15,7 @@
 
 #include <svo/common/conversions.h>
 #include <svo/common/point.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/imu_calibration.h>
 #include <svo/direct/depth_filter.h>
 #include <svo/direct/feature_detection.h>
@@ -894,7 +895,7 @@ void FrameHandlerBase::upgradeSeedsToFeatures(const FramePtr& frame)
         // Update the edgelet direction.
         double angle = feature_detection_utils::getAngleAtPixelUsingHistogram(
             frame->img_pyr_[frame->level_vec_[i]],
-            (frame->px_vec_.col(i) / (1 << frame->level_vec_[i])).cast<int>(),
+            pyramid::pixelToLevel(frame->px_vec_.col(i), frame->level_vec_[i]).cast<int>(),
             4u);
         frame->grad_vec_.col(i) = GradientVector(std::cos(angle),
                                                  std::sin(angle));

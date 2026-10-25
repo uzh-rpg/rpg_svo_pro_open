@@ -10,6 +10,7 @@
 #include <svo/direct/patch_warp.h>
 #include <svo/direct/patch_utils.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/camera.h>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -69,7 +70,7 @@ double DepthEstimator::evaluateError(
   if(!cur_frame_->cam_->isKeypointVisibleWithMargin(px_cur, (kPatchHalfsize+3)*level_))
   {
     VLOG(200) << "Depth Estimation: Cur-Patch out of image."
-              << " px_cur_pyr = ("  << (px_cur / (1 << level_)).transpose()
+              << " px_cur_pyr = ("  << pyramid::pixelToLevel(px_cur, level_).transpose()
               << "), img_size = (" << cur_frame_->img_pyr_[level_].cols
               << " x " << cur_frame_->img_pyr_[level_].rows << ")";
     return 0.0;
@@ -84,7 +85,7 @@ double DepthEstimator::evaluateError(
                        level_, level_, kPatchHalfsize+1, ref_patch_with_border_))
   {
     VLOG(200) << "Depth Estimation: Ref-Patch out of image:"
-              << " px_ref_pyr = "  << (px_ref_ / (1<<level_)).transpose()
+              << " px_ref_pyr = "  << pyramid::pixelToLevel(px_ref_, level_).transpose()
               << "), img_size = (" << cur_frame_->img_pyr_[level_].cols
               << " x " << cur_frame_->img_pyr_[level_].rows << ")";
     return 0.0;
@@ -93,7 +94,7 @@ double DepthEstimator::evaluateError(
         ref_patch_with_border_, kPatchSize, ref_patch_);
 
   uint8_t cur_patch_with_border[(kPatchSize+2)*(kPatchSize+2)] __attribute__ ((aligned (16)));
-  Keypoint px_cur_vec = px_cur / (1 << level_);
+  Keypoint px_cur_vec = pyramid::pixelToLevel(px_cur, level_);
   warp::createPatchNoWarpInterpolated(
       cur_frame_->img_pyr_[level_], px_cur_vec, kPatchHalfsize+1, cur_patch_with_border);
 
@@ -103,7 +104,7 @@ double DepthEstimator::evaluateError(
     cv::cvtColor(cur_frame_->img_pyr_[level_], img_cur_rgb, cv::COLOR_GRAY2RGB);
     cv::Mat img_ref_rgb(ref_frame_->img_pyr_[level_].size(), CV_8UC3);
     cv::cvtColor(ref_frame_->img_pyr_[level_], img_ref_rgb, cv::COLOR_GRAY2RGB);
-    const Eigen::Vector2d px_ref_vec = px_ref_ / (1 << level_);
+    const Eigen::Vector2d px_ref_vec = pyramid::pixelToLevel(px_ref_, level_);
     cv::rectangle(img_cur_rgb, cv::Rect(px_cur_vec(0), px_cur_vec(1), kPatchSize+3, kPatchSize+3), cv::Scalar(0,255,1));
     cv::rectangle(img_ref_rgb, cv::Rect(px_ref_vec(0), px_ref_vec(1), kPatchSize+3, kPatchSize+3), cv::Scalar(0,255,1));
     cv::imshow("img_cur_rgb", img_cur_rgb);

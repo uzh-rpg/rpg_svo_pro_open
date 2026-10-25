@@ -20,6 +20,7 @@
 #include <svo/direct/patch_score.h>
 #include <svo/direct/patch_utils.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/point.h>
 #include <svo/common/feature_wrapper.h>
 #include <svo/direct/feature_alignment.h>
@@ -35,7 +36,7 @@ Matcher::MatchResult Matcher::findMatchDirect(
     const FloatType& ref_depth,
     Keypoint& px_cur)
 {
-  Eigen::Vector2i pxi = ref_ftr.px.cast<int>()/(1<<ref_ftr.level);
+  Eigen::Vector2i pxi = pyramid::pixelToLevel(ref_ftr.px, ref_ftr.level).cast<int>();
   int boundary = kHalfPatchSize+2;
   if(pxi[0] < boundary
      || pxi[1] < boundary
@@ -83,7 +84,7 @@ Matcher::MatchResult Matcher::findMatchDirect(
         patch_with_border_, kPatchSize, patch_);
 
   // px_cur should be set
-  Keypoint px_scaled(px_cur/(1<<search_level_));
+  Keypoint px_scaled(pyramid::pixelToLevel(px_cur, search_level_));
   Keypoint px_scaled_start(px_scaled);
 
   //bool success = false;
@@ -102,7 +103,7 @@ Matcher::MatchResult Matcher::findMatchDirect(
       {
         return MatchResult::kFailTooFar;
       }
-      px_cur = px_scaled * (1<<search_level_);
+      px_cur = pyramid::pixelToLevelZero(px_scaled, search_level_);
       // set member variables with results (used in reprojector)
       px_cur_ = px_cur;
       cur_frame.cam()->backProject3(px_cur_, &f_cur_);
@@ -125,7 +126,7 @@ Matcher::MatchResult Matcher::findMatchDirect(
       {
         return MatchResult::kFailTooFar;
       }
-      px_cur = px_scaled * (1<<search_level_);
+      px_cur = pyramid::pixelToLevelZero(px_scaled, search_level_);
       // set member variables with results (used in reprojector)
       px_cur_ = px_cur;
       cur_frame.cam()->backProject3(px_cur_, &f_cur_);
@@ -265,7 +266,7 @@ Matcher::MatchResult Matcher::findLocalMatch(
     const int patch_level,
     Keypoint& px_cur)
 {
-  Keypoint px_scaled(px_cur/(1<<patch_level));
+  Keypoint px_scaled(pyramid::pixelToLevel(px_cur, patch_level));
   bool res;
   if(options_.align_1d)
     res = feature_alignment::align1D(
@@ -284,7 +285,7 @@ Matcher::MatchResult Matcher::findLocalMatch(
   if(!res)
     return MatchResult::kFailAlignment;
 
-  px_cur = px_scaled*(1<<patch_level);
+  px_cur = pyramid::pixelToLevelZero(px_scaled, patch_level);
   return MatchResult::kSuccess;
 }
 
@@ -370,8 +371,8 @@ void Matcher::scanEpipolarUnitPlane(
   {
     Eigen::Vector2d px;
     frame.cam()->project3(vk::unproject2d(uv), &px);
-    Eigen::Vector2i pxi(px[0]/(1<<patch_level)+0.5,
-                 px[1]/(1<<patch_level)+0.5); // +0.5 to round to closest int
+    const Eigen::Vector2i pxi =
+        (pyramid::pixelToLevel(px, patch_level).array() + 0.5).cast<int>();
 
     if(pxi == last_checked_pxi)
       continue;
@@ -457,8 +458,8 @@ void Matcher::scanEpipolarUnitSphere(
     // back project to image plane
     Eigen::Vector2d px;
     frame.cam()->project3(f, &px);
-    Eigen::Vector2i pxi(px[0]/(1<<patch_level)+0.5,
-                 px[1]/(1<<patch_level)+0.5); // +0.5 to round to closest int
+    const Eigen::Vector2i pxi =
+        (pyramid::pixelToLevel(px, patch_level).array() + 0.5).cast<int>();
     if(pxi == last_checked_pxi)
       continue;
     last_checked_pxi = pxi;

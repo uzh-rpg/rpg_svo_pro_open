@@ -74,9 +74,7 @@ size_t FeatureTracker::trackFrameBundle(const FrameBundlePtr& nframe_kp1)
       const ImgPyr& ref_pyr = ref_observation.getFrame()->img_pyr_;
       const ImgPyr& cur_pyr = cur_frame->img_pyr_;
 
-      // TODO(cfo): make work for feature coordinates with subpixel reference patch!
-      // Currently not a problem because feature detector returns integer pos.
-      Eigen::Vector2i ref_px_level_0 = ref_observation.getPx().cast<int>();
+      const Keypoint ref_px_level_0 = ref_observation.getPx();
       Keypoint cur_px_level_0 = track.back().getPx();
       bool success = feature_alignment::alignPyr2D(
             ref_pyr, cur_pyr,

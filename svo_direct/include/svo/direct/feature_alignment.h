@@ -56,6 +56,7 @@ bool align2D_NEON(
     const int n_iter,
     Keypoint& cur_px_estimate);
 
+// Multi-level alignment expects the half-sampled pyramids from createImgPyramid.
 void alignPyr2DVec(
     const std::vector<cv::Mat>& img_pyr_ref,
     const std::vector<cv::Mat>& img_pyr_cur,
@@ -76,7 +77,7 @@ bool alignPyr2D(
     const std::vector<int>& patch_sizes,
     const int n_iter,
     const float min_update_squared,
-    const Eigen::Vector2i &px_ref_level_0,
+    const Keypoint &px_ref_level_0,
     Keypoint &px_cur_level_0);
 
 } // namespace feature_alignment
