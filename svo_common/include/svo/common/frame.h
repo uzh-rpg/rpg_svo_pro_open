@@ -545,7 +545,8 @@ private:
 /// Some helper functions for the frame object.
 namespace frame_utils {
 
-/// Creates an image pyramid of half-sampled images.
+/// Creates a pyramid by averaging 2x2 blocks. Use pyramid::pixelToLevel and
+/// pyramid::pixelToLevelZero (svo/common/pyramid.h) to convert pixel positions.
 void createImgPyramid(
     const cv::Mat& img_level_0,
     int n_levels,

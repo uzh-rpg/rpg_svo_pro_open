@@ -8,6 +8,7 @@
 
 #include <svo/direct/patch_warp.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/point.h>
 #include <svo/common/feature_wrapper.h>
 #include <svo/common/camera.h>
@@ -127,7 +128,7 @@ bool warpAffine(
 
   // Perform the warp on a larger patch.
   uint8_t* patch_ptr = patch;
-  const Eigen::Vector2f px_ref_pyr = px_ref.cast<float>() / (1<<level_ref);
+  const Eigen::Vector2f px_ref_pyr = pyramid::pixelToLevel(px_ref.cast<float>(), level_ref);
   const int stride = img_ref.step.p[0];
   for (int y=-halfpatch_size; y<halfpatch_size; ++y)
   {
@@ -176,7 +177,7 @@ bool warpPixelwise(
   Eigen::Vector3d xyz_cur = cur_frame.T_cam_world()*(ref_frame.T_cam_world().inverse())*xyz_ref;
   Eigen::Vector2d px_cur;
   cur_frame.cam()->project3(xyz_cur, &px_cur);
-  Eigen::Vector2d px_cur_search = px_cur / (1<<level_cur);
+  Eigen::Vector2d px_cur_search = pyramid::pixelToLevel(px_cur, level_cur);
 
   // for each pixel in the patch(on search level):
   // - convert to image level
@@ -193,12 +194,12 @@ bool warpPixelwise(
       const Eigen::Vector2d ele_patch(x, y);
       Eigen::Vector2d ele_search = ele_patch + px_cur_search;
       Eigen::Vector3d ele_xyz_cur;
-      cur_frame.cam()->backProject3(ele_search*(1<<level_cur), &ele_xyz_cur);
+      cur_frame.cam()->backProject3(pyramid::pixelToLevelZero(ele_search, level_cur), &ele_xyz_cur);
       ele_xyz_cur = ele_xyz_cur.normalized() * depth_cur;
       Eigen::Vector3d ele_xyz_ref = ref_frame.T_cam_world() * (cur_frame.T_cam_world().inverse()) * ele_xyz_cur;
       Eigen::Vector2d ele_ref;
       ref_frame.cam()->project3(ele_xyz_ref, &ele_ref);
-      ele_ref = ele_ref / (1<<level_ref);
+      ele_ref = pyramid::pixelToLevel(ele_ref, level_ref);
 
       const int xi = std::floor(ele_ref[0]);
       const int yi = std::floor(ele_ref[1]);

@@ -7,6 +7,7 @@
 // 'LICENSE', which is part of this source code package.
 
 #include <svo/direct/feature_alignment.h>
+#include <svo/common/pyramid.h>
 
 #ifdef __SSE2__
 # include <emmintrin.h>
@@ -743,17 +744,13 @@ void alignPyr2DVec(
 {
   for(size_t i=0; i<px_ref.size(); ++i)
   {
-    Eigen::Vector2i px_ref_level_0(px_ref[i].x, px_ref[i].y);
+    const Keypoint px_ref_level_0(px_ref[i].x, px_ref[i].y);
     Keypoint px_cur_level_0(px_cur[i].x, px_cur[i].y);
     bool res = alignPyr2D(
           img_pyr_ref, img_pyr_cur, max_level, min_level, patch_sizes,
           n_iter, min_update_squared, px_ref_level_0, px_cur_level_0);
     status[i] = res ? 1 : 0;
     px_cur[i] = cv::Point2f(px_cur_level_0[0], px_cur_level_0[1]);
-
-    // TODO: add subpixel of rounding px_ref_level_0.
-    //       typically not a problem because ref comes directly from feature
-    //       extraction and is int.
   }
 }
 
@@ -766,7 +763,7 @@ bool alignPyr2D(
     const std::vector<int>& patch_sizes,
     const int n_iter,
     const float min_update_squared,
-    const Eigen::Vector2i& px_ref_level_0,
+    const Keypoint& px_ref_level_0,
     Keypoint& px_cur_level_0)
 {
 #define SVO_PYRAMIDAL_VERBOSE 0
@@ -789,13 +786,14 @@ bool alignPyr2D(
     CHECK(patch_size % 8 == 0)
         << ": alignPyr2D is only made for patch sizes multiples of 8!";
     const int halfpatch_size = patch_size/2;
-    const int scale = (1<<level);
     const cv::Mat& img_ref = img_pyr_ref[level];
     const cv::Mat& img_cur = img_pyr_cur[level];
     const int width = img_ref.cols;
     const int height = img_ref.rows;
     const int step = img_ref.step; // should be number of bytes of each row
-    const Eigen::Vector2f px_ref_flt = px_ref_level_0.cast<float>() / scale - Eigen::Vector2f(halfpatch_size, halfpatch_size);
+    const Eigen::Vector2f px_ref_flt =
+        pyramid::pixelToLevel(px_ref_level_0.cast<float>(), level) -
+        Eigen::Vector2f(halfpatch_size, halfpatch_size);
     const Eigen::Vector2i px_ref = px_ref_flt.cast<int>();
     const Eigen::Vector2f px_ref_offset = px_ref_flt - px_ref.cast<float>();
 
@@ -828,8 +826,9 @@ bool alignPyr2D(
     Eigen::Matrix2f Hinv = H.inverse();
 
     // Compute pixel location in new image:
-    float u = px_cur_level_0[0] / scale - halfpatch_size - px_ref_offset[0];
-    float v = px_cur_level_0[1] / scale - halfpatch_size - px_ref_offset[1];
+    const Eigen::Vector2f px_cur_pyr = pyramid::pixelToLevel(px_cur_level_0.cast<float>(), level);
+    float u = px_cur_pyr[0] - halfpatch_size - px_ref_offset[0];
+    float v = px_cur_pyr[1] - halfpatch_size - px_ref_offset[1];
     Eigen::Vector2f update; update.setZero();
     bool go_to_next_level = false;
     const int SHIFT_BITS = 7;
@@ -961,8 +960,8 @@ bool alignPyr2D(
       }
     } // end iterations
 
-    px_cur_level_0 = Keypoint((u+halfpatch_size+px_ref_offset[0])*scale,
-        (v+halfpatch_size+px_ref_offset[1])*scale);
+    px_cur_level_0 = pyramid::pixelToLevelZero(
+        Keypoint(u+halfpatch_size+px_ref_offset[0], v+halfpatch_size+px_ref_offset[1]), level);
 
     if(!converged && !go_to_next_level)
       return false; // no need to go to next level when we didn't converge at this one.

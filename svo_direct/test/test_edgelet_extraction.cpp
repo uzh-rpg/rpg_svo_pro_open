@@ -4,6 +4,7 @@
 // svo
 #include <svo/test_utils/synthetic_dataset.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/camera.h>
 #include <svo/direct/matcher.h>
 #include <svo/direct/feature_detection.h>
@@ -281,7 +282,7 @@ void test()
 
       // create patch
       warp::createPatchNoWarp(
-            frame->img_pyr_[level], (frame->px_vec_.col(i)/ (1 << level)).cast<int>(),
+            frame->img_pyr_[level], pyramid::pixelToLevel(frame->px_vec_.col(i), level).cast<int>(),
             kHalfPatchSize, patch);
       cv::Mat patch_upsampled;
       cv::Mat patch_img(kPatchSize, kPatchSize, CV_8UC1, patch);
@@ -289,7 +290,7 @@ void test()
 
       // compute angle using histogram (GREEN
       double angle_hist = feature_detection_utils::getAngleAtPixelUsingHistogram(
-            frame->img_pyr_[level], (frame->px_vec_.col(i)/(1<<level)).cast<int>(), kHalfPatchSize);
+            frame->img_pyr_[level], pyramid::pixelToLevel(frame->px_vec_.col(i), level).cast<int>(), kHalfPatchSize);
       cv::line(patch_upsampled,
                cv::Point2f(patch_upsampled.rows/2, patch_upsampled.rows/2),
                cv::Point2f(patch_upsampled.rows/2+15*std::cos(angle_hist), patch_upsampled.rows/2 +15*std::sin(angle_hist)),

@@ -15,6 +15,7 @@ set(HEADERS
   include/svo/common/logging.h
   include/svo/common/occupancy_grid_2d.h
   include/svo/common/point.h
+  include/svo/common/pyramid.h
   include/svo/common/seed.h
   include/svo/common/transformation.h
   include/svo/common/types.h

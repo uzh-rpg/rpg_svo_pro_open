@@ -7,6 +7,7 @@
 // 'LICENSE', which is part of this source code package.
 
 #include <svo/img_align/sparse_img_align.h>
+#include <svo/common/pyramid.h>
 
 #include <algorithm>
 #include <random> // std::mt19937
@@ -164,7 +165,6 @@ void  SparseImgAlign::finishIteration()
           cur_frames_->at(cam_index)->img_pyr_.at(level_).size(),
           CV_32FC1, cv::Scalar(0.0));
     const size_t nr_features = fts_vec_.at(cam_index).size();
-    const FloatType scale = 1.0f/(1<<level_);
     const int patch_size_wb = patch_size_ + 2*border_size_; //patch size with border
     const FloatType patch_center_wb = (patch_size_wb - 1)/2.0f;
 
@@ -174,8 +174,9 @@ void  SparseImgAlign::finishIteration()
         continue;
 
       // compute top left coordinate of patch to be interpolated
-      const FloatType u_tl = uv_cache_(0,i)*scale - patch_center_wb;
-      const FloatType v_tl = uv_cache_(1,i)*scale - patch_center_wb;
+      const Keypoint px = pyramid::pixelToLevel(uv_cache_.col(i), level_);
+      const FloatType u_tl = px.x() - patch_center_wb;
+      const FloatType v_tl = px.y() - patch_center_wb;
 
       size_t pixel_counter = 0; // is used to compute the index of the cached residual
       for(int y = 0; y < patch_size_; ++y)
@@ -229,7 +230,6 @@ void extractFeaturesSubset(const Frame& ref_frame,
 
   // ignore any feature point, which does not project fully in the image
   // checking on highest level is sufficient.
-  const FloatType scale = 1.0f/(1<<max_level);
   const cv::Mat& ref_img = ref_frame.img_pyr_.at(max_level);
   const int rows_minus_two = ref_img.rows - 2;
   const int cols_minus_two = ref_img.cols - 2;
@@ -246,8 +246,9 @@ void extractFeaturesSubset(const Frame& ref_frame,
     {
       continue;
     }
-    const FloatType u_tl = ref_frame.px_vec_(0,i)*scale - patch_center_wb;
-    const FloatType v_tl = ref_frame.px_vec_(1,i)*scale - patch_center_wb;
+    const Keypoint px = pyramid::pixelToLevel(ref_frame.px_vec_.col(i), max_level);
+    const FloatType u_tl = px.x() - patch_center_wb;
+    const FloatType v_tl = px.y() - patch_center_wb;
     const int u_tl_i = std::floor(u_tl);
     const int v_tl_i = std::floor(v_tl);
     if(!(u_tl_i < 0
@@ -344,8 +345,9 @@ void precomputeJacobiansAndRefPatches(
   for(size_t i = 0; i < nr_features; ++i, ++feature_counter)
   {
     // compute top left coordinate of patch to be interpolated
-    const FloatType u_tl = uv_cache(0,feature_counter)*scale - patch_center_wb;
-    const FloatType v_tl = uv_cache(1,feature_counter)*scale - patch_center_wb;
+    const Keypoint px = pyramid::pixelToLevel(uv_cache.col(feature_counter), level);
+    const FloatType u_tl = px.x() - patch_center_wb;
+    const FloatType v_tl = px.y() - patch_center_wb;
 
     const int u_tl_i = std::floor(u_tl);
     const int v_tl_i = std::floor(v_tl);
@@ -419,7 +421,6 @@ void computeResidualsOfFrame(
 {
   const cv::Mat& cur_img = cur_frame->img_pyr_.at(level);
   const int stride = cur_img.step;
-  const FloatType scale = 1.0f/(1<<level);
   const int patch_area = patch_size*patch_size;
   const FloatType patch_center = (patch_size - 1)/2.0f;
 
@@ -439,7 +440,7 @@ void computeResidualsOfFrame(
 
     Eigen::Vector2d uv_cur;
     cur_frame->cam()->project3(xyz_cur, &uv_cur);
-    const Vector2ft uv_cur_pyr = uv_cur.cast<FloatType>() * scale;
+    const Vector2ft uv_cur_pyr = pyramid::pixelToLevel(uv_cur.cast<FloatType>(), level);
 
     // compute top left coordinate of patch to be interpolated
     const FloatType u_tl = uv_cur_pyr[0] - patch_center;
@@ -559,7 +560,6 @@ float computeResidualHessianGradient(const FramePtr& cur_frame,
 {
   const cv::Mat& cur_img = cur_frame->img_pyr_.at(level);
   const int stride = cur_img.step;
-  const float scale = 1.0f/(1<<level);
   const int patch_area = patch_size*patch_size;
   const FloatType patch_center = (patch_size - 1)/2.0f;
 
@@ -584,7 +584,7 @@ float computeResidualHessianGradient(const FramePtr& cur_frame,
     }
     Eigen::Vector2d uv_cur;
     cur_frame->cam()->project3(xyz_cur, &uv_cur);
-    const Vector2ft uv_cur_pyr = uv_cur.cast<FloatType>() * scale;
+    const Vector2ft uv_cur_pyr = pyramid::pixelToLevel(uv_cur.cast<FloatType>(), level);
 
     // compute top left coordinate of patch to be interpolated
     const FloatType u_tl = uv_cur_pyr[0] - patch_center;

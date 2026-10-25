@@ -15,6 +15,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <aslam/common/memory.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/camera.h>
 #include <svo/common/logging.h>
 #include <svo/direct/feature_detection_utils.h>
@@ -316,7 +317,6 @@ void AllPixelsDetector::detect(
 {
   const int width = img_pyr.at(options_.sampling_level).cols;
   const int height = img_pyr.at(options_.sampling_level).rows;
-  const int pyr_init_scale = 1 << options_.sampling_level;
   const int border = options_.border;
   const size_t num_features = (width-2*border) * (height-2*border);
 
@@ -330,7 +330,7 @@ void AllPixelsDetector::detect(
   {
     for(int x=border; x<width-border; ++x)
     {
-      px_vec.col(feature_index++) = svo::Keypoint(x*pyr_init_scale, y*pyr_init_scale);
+      px_vec.col(feature_index++) = pyramid::pixelToLevelZero(Keypoint(x, y), options_.sampling_level);
     }
   }
 }
@@ -353,7 +353,6 @@ void CannyDetector::detect(
   const int width = img_pyr.at(options_.sampling_level).cols;
   const int height = img_pyr.at(options_.sampling_level).rows;
   const int border = 1;
-  const int pyr_init_scale = 1 << options_.sampling_level;
   const int max_num_features = cv::countNonZero(canny_edges == 255);
 
   px_vec.resize(Eigen::NoChange, max_num_features);
@@ -364,7 +363,7 @@ void CannyDetector::detect(
     {
       if (canny_edges.at<uchar>(y,x))
       {
-        px_vec.col(feature_index++) = svo::Keypoint(x*pyr_init_scale, y*pyr_init_scale);
+        px_vec.col(feature_index++) = pyramid::pixelToLevelZero(Keypoint(x, y), options_.sampling_level);
       }
     }
   }
@@ -394,7 +393,6 @@ void SobelDetector::detect(
   const int width = img_pyr.at(options_.sampling_level).cols;
   const int height = img_pyr.at(options_.sampling_level).rows;
   const int border = 1;
-  const int pyr_init_scale = 1 << options_.sampling_level;
   const int max_num_features = cv::countNonZero(sobel_edges==255);
 
   px_vec.resize(Eigen::NoChange, max_num_features);
@@ -405,7 +403,7 @@ void SobelDetector::detect(
     {
       if (sobel_edges.at<uchar>(y,x))
       {
-        px_vec.col(feature_index++) = svo::Keypoint(x*pyr_init_scale, y*pyr_init_scale);
+        px_vec.col(feature_index++) = pyramid::pixelToLevelZero(Keypoint(x, y), options_.sampling_level);
       }
     }
   }
@@ -439,7 +437,6 @@ void GradientHuangMumfordDetector::detect(
   const int width = img_pyr.at(options_.sampling_level).cols;
   const int height = img_pyr.at(options_.sampling_level).rows;
   const int border = 1;
-  const int pyr_init_scale = 1 << options_.sampling_level;
 
   cv::Mat mag_level_32f = mag_pyr_32f[options_.sampling_level];
   cv::Mat mag_level_thresholded;
@@ -461,7 +458,7 @@ void GradientHuangMumfordDetector::detect(
     {
       if (mag_level_thresholded.at<uchar>(y,x))
       {
-        px_vec.col(feature_index++) = svo::Keypoint(x*pyr_init_scale, y*pyr_init_scale);
+        px_vec.col(feature_index++) = pyramid::pixelToLevelZero(Keypoint(x, y), options_.sampling_level);
       }
     }
   }

@@ -16,13 +16,13 @@ namespace svo {
 /// Temporary container used for corner detection. Features are initialized from these.
 struct Corner
 {
-  int x;        ///< x-coordinate of corner in the image.
-  int y;        ///< y-coordinate of corner in the image.
+  FloatType x;  ///< x-coordinate of corner in level zero, including subpixel offsets.
+  FloatType y;  ///< y-coordinate of corner in level zero, including subpixel offsets.
   int level;    ///< pyramid level of the corner.
   float score;  ///< shi-tomasi score of the corner.
   float angle;  ///< for gradient-features: dominant gradient angle.
 
-  Corner(int _x, int _y, float _score, int _level, float _angle)
+  Corner(FloatType _x, FloatType _y, float _score, int _level, float _angle)
     : x(_x), y(_y), level(_level), score(_score), angle(_angle)
   {}
 };

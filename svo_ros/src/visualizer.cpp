@@ -30,6 +30,7 @@
 
 #include <svo/frame_handler_base.h>
 #include <svo/common/frame.h>
+#include <svo/common/pyramid.h>
 #include <svo/common/point.h>
 #include <svo/common/seed.h>
 #include <svo/tracker/feature_tracking_utils.h>
@@ -330,16 +331,17 @@ void Visualizer::publishFeatureTracks(
   if (pub_images_.at(frame_index).getNumSubscribers() == 0)
     return;
   VLOG(100) << "Publish feature tracks.";
-  const int scale = (1 << level);
   cv::Mat img_rgb(img_pyr[level].size(), CV_8UC3);
   cv::cvtColor(img_pyr[level], img_rgb, cv::COLOR_GRAY2RGB);
   for (size_t i = 0; i < matches_ref_cur.size(); ++i)
   {
     size_t i_ref = matches_ref_cur[i].first;
     size_t i_cur = matches_ref_cur[i].second;
+    const Keypoint cur = pyramid::pixelToLevel(px_cur.col(i_cur), level);
+    const Keypoint ref = pyramid::pixelToLevel(px_ref.col(i_ref), level);
     cv::line(img_rgb,
-             cv::Point2f(px_cur(0, i_cur) / scale, px_cur(1, i_cur) / scale),
-             cv::Point2f(px_ref(0, i_ref) / scale, px_ref(1, i_ref) / scale),
+             cv::Point2f(cur.x(), cur.y()),
+             cv::Point2f(ref.x(), ref.y()),
              cv::Scalar(0, 255, 0), 2);
   }
   writeCaptionStr(img_rgb);
